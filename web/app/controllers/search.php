@@ -63,7 +63,6 @@ $blogs_pag = new Paginator([
                     <div class="form-group">
                         <label>标签</label>
                         <input type="text" name="tag" class="form-control" value="<?= HTML::escape($tag) ?>">
-                        <div class="help-block">支持区段标签搜索，如 <code>sol=8~19</code></div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">搜索</button>
                 </form>
