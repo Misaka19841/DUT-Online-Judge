@@ -35,9 +35,9 @@
 		}
 	}
 ?>
-<?php echoUOJPageHeader(HTML::stripTags($contest['name']) . ' - ' . UOJLocale::get('contests::contest registrants')) ?>
+<?php echoUOJPageHeader(UOJContest::formatNameForText($contest['name']) . ' - ' . UOJLocale::get('contests::contest registrants')) ?>
 
-<h1 class="text-center"><?= $contest['name'] ?></h1>
+<h1 class="text-center"><?= UOJContest::formatNameForDisplay($contest['name']) ?></h1>
 <?php if ($contest['cur_progress'] == CONTEST_NOT_STARTED): ?>
     <?php if ($iHasRegistered): ?>
         <?php if (isset($unregister_form)): ?>

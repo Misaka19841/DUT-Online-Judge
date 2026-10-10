@@ -14,7 +14,7 @@
 
 // 获取比赛配置
 $contest_id = $contest['id'];
-$contest_name = $contest['name'];
+$contest_name = UOJContest::formatNameForText($contest['name']);
 $start_time = $contest['start_time_str'];
 $last_min = $contest['last_min'];
 $contest_data = queryContestData($contest);

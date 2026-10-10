@@ -8,12 +8,12 @@
         $ucontest = new UOJContest($info);
         $contest = $ucontest->info;
 
-        $contest_name_link = '<a href="/contest/'.$contest['id'].'">'.$contest['name'].'</a>';
+        $contest_name_link = '<a href="/contest/'.$contest['id'].'">'.UOJContest::formatNameForDisplay($contest['name']).'</a>';
         
 		if ($contest['cur_progress'] == CONTEST_NOT_STARTED) {
 			$cur_rest_second = $contest['start_time']->getTimestamp() - UOJTime::$time_now->getTimestamp();
 			if ($cur_rest_second < $rest_second) {
-				$upcoming_contest_name = $contest['name'];
+                            $upcoming_contest_name = UOJContest::formatNameForText($contest['name']);
 				$upcoming_contest_href = "/contest/{$contest['id']}";
 				$rest_second = $cur_rest_second;
 			}
@@ -102,4 +102,3 @@ EOD;
 	);
 ?>
 <?php echoUOJPageFooter() ?>
-

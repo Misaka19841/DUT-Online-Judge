@@ -277,7 +277,7 @@ requireLib('shjs');
 
 <?php if (UOJContest::cur()): ?>
 <div class="page-header row">
-	<h1 class="col-md-3 text-left"><small><?= UOJContest::info('name') ?></small></h1>
+        <h1 class="col-md-3 text-left"><small><?= UOJContest::formatNameForDisplay(UOJContest::info('name')) ?></small></h1>
 	<h1 class="col-md-6 text-center"><?= UOJProblem::cur()->getTitle(['with' => 'letter', 'simplify' => true]) ?></h1>
 	<div class="col-md-3 text-right" style="margin-top: 20px" id="contest-countdown"></div>
 </div>

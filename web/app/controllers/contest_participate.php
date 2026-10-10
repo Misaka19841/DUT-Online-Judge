@@ -51,10 +51,10 @@ EOD;
 	</body>
 </html>
 <?php else: ?>
-<?php echoUOJPageHeader(HTML::stripTags(UOJContest::info('name')) . ' - 确认参赛') ?>
+<?php echoUOJPageHeader(UOJContest::formatNameForText(UOJContest::info('name')) . ' - 确认参赛') ?>
 <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
-		<h1 class="page-header">确认参赛：<?= UOJContest::info('name') ?></h1>
+                <h1 class="page-header">确认参赛：<?= UOJContest::formatNameForDisplay(UOJContest::info('name')) ?></h1>
 		<ul>
 			<li>比赛报名后不算正式参赛，报名后进了比赛页面也不算参赛，<strong>看了题目才算正式参赛</strong>。如果未正式参赛则不算 rating。</li>
 			<li>你正在试图打开一道比赛题目：<?= UOJProblem::cur()->getLink(['with' => 'letter']) ?>，虽然你迟到了一点点。</li>

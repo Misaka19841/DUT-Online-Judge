@@ -355,9 +355,9 @@
 	$contest_config_form->runAtServer();
 	$problems_form->runAtServer();
 ?>
-<?php echoUOJPageHeader(HTML::stripTags($contest['name']) . ' - 比赛管理') ?>
+<?php echoUOJPageHeader(UOJContest::formatNameForText($contest['name']) . ' - 比赛管理') ?>
 <div class="text-center">
-    <h1 class="page-header"><?=$contest['name']?> 管理</h1>
+    <h1 class="page-header"><?= UOJContest::formatNameForDisplay($contest['name']) ?> 管理</h1>
 </div>
 <ul class="nav nav-tabs" role="tablist">
 	<li class="active"><a href="#tab-time" role="tab" data-toggle="tab">比赛时间</a></li>
@@ -533,4 +533,3 @@ $res = DB::selectAll([
 	</div>
 </div>
 <?php echoUOJPageFooter() ?>
-

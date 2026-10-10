@@ -14,7 +14,7 @@
 	
 	$register_form->runAtServer();
 ?>
-<?php echoUOJPageHeader(HTML::stripTags($contest['name']) . ' - 报名') ?>
+<?php echoUOJPageHeader(UOJContest::formatNameForText($contest['name']) . ' - 报名') ?>
 <div class="row">
     <div class="col-lg-offset-1 col-lg-10">
 		<h1 class="page-header">比赛规则：<?=UOJLocale::get('contests::'.$contest['extra_config']['basic_rule'])?></h1>

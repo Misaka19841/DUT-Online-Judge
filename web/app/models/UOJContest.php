@@ -119,9 +119,9 @@ class UOJContest {
             $content .= '<p class="indent2">';
             if ($change != 0) {
                 $chstr = ($change > 0 ? '+' : '').$change;
-                $content .= '您在 <a href="/contest/'.$contest['id'].'">'.$contest['name'].'</a> 这场比赛后的Rating变化为<strong style="color:red">'.$chstr.'</strong>，';
+                $content .= '您在 <a href="/contest/'.$contest['id'].'">'.self::formatNameForText($contest['name']).'</a> 这场比赛后的Rating变化为<strong style="color:red">'.$chstr.'</strong>，';
             } else {
-                $content .= '您在 <a href="/contest/'.$contest['id'].'">'.$contest['name'].'</a> 这场比赛后Rating没有变化。';
+                $content .= '您在 <a href="/contest/'.$contest['id'].'">'.self::formatNameForText($contest['name']).'</a> 这场比赛后Rating没有变化。';
             }
             $content .= '当前Rating为 <strong style="color:red">'.$ratings[$i].'</strong>。';
             $content .= '</p>';
@@ -163,6 +163,28 @@ class UOJContest {
     public function __construct($info) {
         $this->info = $info;
         $this->completeInfo();
+    }
+
+    public static function splitNameParts($name) {
+        $parts = array_map('trim', explode('\\\\', $name));
+        $parts = array_values(array_filter($parts, function($part) {
+            return $part !== '';
+        }));
+
+        if (!$parts) {
+            return [trim($name)];
+        }
+        return $parts;
+    }
+
+    public static function formatNameForText($name) {
+        return implode(' ', self::splitNameParts($name));
+    }
+
+    public static function formatNameForDisplay($name) {
+        return implode('<br />', array_map(function($part) {
+            return HTML::escape($part);
+        }, self::splitNameParts($name)));
     }
 
     public function completeInfo() {
@@ -301,7 +323,7 @@ class UOJContest {
     }
 
     public function reasonForFinalTest() {
-        $reason_text = HTML::stripTags($this->info['name']);
+        $reason_text = self::formatNameForText($this->info['name']);
         if ($this->progress() < CONTEST_TESTING) {
             $reason_text .= ' 最终测试';
         } else {
@@ -316,7 +338,7 @@ class UOJContest {
     public function reasonForRejudgingContestSubmission() {
         if ($this->basicRule() !== 'UOJ-ACM'
             && CONTEST_TESTING <= $this->progress() && $this->progress() < CONTEST_FINISHED) {
-            $reason_text = HTML::stripTags($this->info['name']).' 重新进行最终测试';
+            $reason_text = self::formatNameForText($this->info['name']).' 重新进行最终测试';
             return [
                 'reason_text' => $reason_text,
                 'reason_url' => HTML::url($this->getUri())
@@ -589,4 +611,3 @@ class UOJContest {
         ]);
     }
 }
-

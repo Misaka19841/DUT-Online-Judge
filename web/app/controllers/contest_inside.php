@@ -418,11 +418,11 @@
 		EOD;
 	}
 	
-	$page_header = HTML::stripTags($contest['name']) . ' - ';
+        $page_header = UOJContest::formatNameForText($contest['name']) . ' - ';
 ?>
-<?php echoUOJPageHeader(HTML::stripTags($contest['name']) . ' - ' . $tabs_info[$cur_tab]['name'] . ' - ' . UOJLocale::get('contests::contest')) ?>
+<?php echoUOJPageHeader(UOJContest::formatNameForText($contest['name']) . ' - ' . $tabs_info[$cur_tab]['name'] . ' - ' . UOJLocale::get('contests::contest')) ?>
 <div class="text-center">
-	<h1><?= $contest['name'] ?></h1>
+        <h1><?= UOJContest::formatNameForDisplay($contest['name']) ?></h1>
 	<?= ClickZans::getBlock('C', $contest['id'], $contest['zan']) ?>
 </div>
 <div class="row">

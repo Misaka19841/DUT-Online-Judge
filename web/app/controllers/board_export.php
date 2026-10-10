@@ -7,7 +7,8 @@ UOJContest::init(UOJRequest::get('id')) || UOJResponse::page404();
 isSuperUser(Auth::user()) || UOJResponse::page403();
 $contest = UOJContest::info();
 
-$contest_name = $contest['name'];
+$contest_name = UOJContest::formatNameForText($contest['name']);
+$contest_name_display = UOJContest::formatNameForDisplay($contest['name']);
 ?>
 <!DOCTYPE html>
 <html>
@@ -23,7 +24,7 @@ $contest_name = $contest['name'];
     </style>
 </head>
 <body>
-    <h1><?= htmlspecialchars($contest_name) ?> - 最终排名</h1>
+    <h1><?= $contest_name_display ?> - 最终排名</h1>
     <div id="result">
         <p>加载中...</p>
     </div>
