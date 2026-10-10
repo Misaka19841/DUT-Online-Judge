@@ -10,7 +10,7 @@
 	};
 	$delete_form->submit_button_config['class_str'] = 'btn btn-danger';
 	$delete_form->submit_button_config['text'] = '是的，我确定要删除';
-	$delete_form->succ_href = "/archive";
+        $delete_form->succ_href = HTML::blog_url(UOJBlog::info('poster'), '/archive');
 	
 	$delete_form->runAtServer();
 ?>

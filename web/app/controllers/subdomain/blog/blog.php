@@ -233,7 +233,122 @@ if ($safeModeEnabled) {
 	$REQUIRE_LIB['shjs'] = '';
 ?>
 <?php echoUOJPageHeader(HTML::stripTags($blog['title']) . ' - 博客') ?>
+<style type="text/css">
+@media (min-width: 1680px) {
+        #blog-toc {
+                position: fixed;
+                top: 160px;
+                left: calc((100vw - 1170px) / 2 - 220px);
+                width: 52px;
+                max-height: calc(100vh - 180px);
+                overflow: hidden;
+                border: 1px solid #ddd;
+                border-left-width: 4px;
+                border-radius: 0 8px 8px 0;
+                background: rgba(255, 255, 255, 0.97);
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+                transition: width 0.2s ease;
+                z-index: 20;
+        }
+        #blog-toc:hover {
+                width: 260px;
+        }
+        #blog-toc .blog-toc-tab {
+                padding: 12px 14px;
+                font-weight: bold;
+                color: #666;
+                border-bottom: 1px solid #eee;
+                white-space: nowrap;
+        }
+        #blog-toc .blog-toc-list {
+                display: none;
+                max-height: calc(100vh - 230px);
+                overflow-y: auto;
+                padding: 8px 0;
+        }
+        #blog-toc:hover .blog-toc-list {
+                display: block;
+        }
+        #blog-toc .blog-toc-item {
+                display: block;
+                padding: 4px 12px;
+                color: #555;
+                line-height: 1.45;
+                text-decoration: none;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+        }
+        #blog-toc .blog-toc-item:hover,
+        #blog-toc .blog-toc-item:focus {
+                background: #f5f5f5;
+                color: #222;
+                text-decoration: none;
+        }
+        #blog-toc .blog-toc-level-2 {
+                padding-left: 24px;
+        }
+        #blog-toc .blog-toc-level-3 {
+                padding-left: 36px;
+        }
+        .uoj-article h1[id],
+        .uoj-article h2[id],
+        .uoj-article h3[id] {
+                scroll-margin-top: 70px;
+        }
+}
+</style>
+<div id="blog-toc" style="display:none">
+        <div class="blog-toc-tab">目录</div>
+        <div class="blog-toc-list"></div>
+</div>
 <?php UOJBlog::cur()->echoView(['show_title_only' => isset($_GET['page']) && $_GET['page'] != 1]) ?>
+<script type="text/javascript">
+$(document).ready(function() {
+        var $toc = $('#blog-toc');
+        if (!$toc.length || window.innerWidth < 1680) {
+                return;
+        }
+
+        var article = document.querySelector('.panel .uoj-article');
+        if (!article) {
+                return;
+        }
+
+        var headings = article.querySelectorAll('h1, h2, h3');
+        if (!headings.length) {
+                return;
+        }
+
+        var $list = $toc.find('.blog-toc-list');
+        var usedIds = {};
+        for (var index = 0; index < headings.length; index++) {
+                var heading = headings[index];
+                var text = (heading.textContent || '').replace(/\s+/g, ' ').trim();
+                if (!text) {
+                        continue;
+                }
+
+                if (!heading.id) {
+                        heading.id = 'blog-toc-heading-' + (index + 1);
+                } else if (usedIds[heading.id]) {
+                        heading.id = heading.id + '-toc-' + (index + 1);
+                }
+                usedIds[heading.id] = true;
+
+                var level = parseInt(heading.tagName.substring(1), 10);
+                var $link = $('<a></a>')
+                        .addClass('blog-toc-item blog-toc-level-' + level)
+                        .attr('href', '#' + heading.id)
+                        .text(text);
+                $list.append($link);
+        }
+
+        if ($list.children().length) {
+                $toc.show();
+        }
+});
+</script>
 <h2>评论 <span class="glyphicon glyphicon-comment"></span></h2>
 <div class="list-group">
 <?php if ($comments_pag->isEmpty()): ?>
