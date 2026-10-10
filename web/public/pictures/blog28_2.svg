@@ -1,0 +1,184 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1363pt" height="152pt" viewBox="0.00 0.00 1362.88 152">
+<g id="graph0" class="graph" transform="translate(4,148) scale(1)" data-name="mutual_relation">
+
+<polygon fill="white" stroke="none" points="-4,4 -4,-148 1358.88,-148 1358.88,4 -4,4"/>
+<!-- A -->
+<g id="node1" class="node" pointer-events="visible" data-name="A">
+
+<polygon fill="none" stroke="black" points="72.88,-72 7.13,-72 7.13,-36 72.88,-36 72.88,-72"/>
+<text text-anchor="middle" x="40.01" y="-49.8" font-family="Times,serif" font-size="14.00">send.cpp</text>
+</g>
+<!-- b -->
+<g id="node8" class="node" pointer-events="visible" data-name="b">
+
+<ellipse fill="none" stroke="black" cx="194.26" cy="-54" rx="44.04" ry="18"/>
+<text text-anchor="middle" x="194.26" y="-49.8" font-family="Times,serif" font-size="14.00">send file</text>
+</g>
+<!-- A&#45;&gt;b -->
+<g id="edge6" class="edge" data-name="A-&gt;b">
+
+<path fill="none" stroke="black" d="M73.3,-54C92.16,-54 116.48,-54 138.29,-54"/>
+<polygon fill="black" stroke="black" points="138.24,-57.5 148.24,-54 138.24,-50.5 138.24,-57.5"/>
+<text text-anchor="middle" x="115.13" y="-58.2" font-family="Times,serif" font-size="14.00">stdout</text>
+</g>
+<!-- B -->
+<g id="node2" class="node" pointer-events="visible" data-name="B">
+
+<polygon fill="none" stroke="black" points="390.76,-74.6 301.76,-74.6 301.76,-33.4 390.76,-33.4 390.76,-74.6"/>
+<text text-anchor="middle" x="346.26" y="-58.2" font-family="Times,serif" font-size="14.00">选手代码</text>
+<text text-anchor="middle" x="346.26" y="-41.4" font-family="Times,serif" font-size="14.00">（第一次运行）</text>
+</g>
+<!-- c -->
+<g id="node9" class="node" pointer-events="visible" data-name="c">
+
+<ellipse fill="none" stroke="black" cx="508.57" cy="-54" rx="47.16" ry="29.33"/>
+<text text-anchor="middle" x="508.57" y="-58.2" font-family="Times,serif" font-size="14.00">transport</text>
+<text text-anchor="middle" x="508.57" y="-41.4" font-family="Times,serif" font-size="14.00">input file</text>
+</g>
+<!-- B&#45;&gt;c -->
+<g id="edge8" class="edge" data-name="B-&gt;c">
+
+<path fill="none" stroke="black" d="M391.06,-54C409.11,-54 430.28,-54 449.59,-54"/>
+<polygon fill="black" stroke="black" points="449.5,-57.5 459.5,-54 449.5,-50.5 449.5,-57.5"/>
+<text text-anchor="middle" x="426.12" y="-58.2" font-family="Times,serif" font-size="14.00">stdout</text>
+</g>
+<!-- C -->
+<g id="node3" class="node" pointer-events="visible" data-name="C">
+
+<polygon fill="none" stroke="black" points="700.28,-72 610.32,-72 610.32,-36 700.28,-36 700.28,-72"/>
+<text text-anchor="middle" x="655.3" y="-49.8" font-family="Times,serif" font-size="14.00">transport.cpp</text>
+</g>
+<!-- d -->
+<g id="node10" class="node" pointer-events="visible" data-name="d">
+
+<ellipse fill="none" stroke="black" cx="822.55" cy="-54" rx="52.06" ry="29.33"/>
+<text text-anchor="middle" x="822.55" y="-58.2" font-family="Times,serif" font-size="14.00">transport</text>
+<text text-anchor="middle" x="822.55" y="-41.4" font-family="Times,serif" font-size="14.00">output file</text>
+</g>
+<!-- C&#45;&gt;d -->
+<g id="edge11" class="edge" data-name="C-&gt;d">
+
+<path fill="none" stroke="black" d="M700.58,-54C718.4,-54 739.27,-54 758.62,-54"/>
+<polygon fill="black" stroke="black" points="758.6,-57.5 768.6,-54 758.6,-50.5 758.6,-57.5"/>
+<text text-anchor="middle" x="735.15" y="-58.2" font-family="Times,serif" font-size="14.00">stdout</text>
+</g>
+<!-- D -->
+<g id="node4" class="node" pointer-events="visible" data-name="D">
+
+<polygon fill="none" stroke="black" points="1019.9,-72 926.2,-72 926.2,-36 1019.9,-36 1019.9,-72"/>
+<text text-anchor="middle" x="973.05" y="-49.8" font-family="Times,serif" font-size="14.00">interactor.cpp</text>
+</g>
+<!-- e -->
+<g id="node11" class="node" pointer-events="visible" data-name="e">
+
+<ellipse fill="none" stroke="black" cx="1142.56" cy="-90" rx="47.55" ry="18"/>
+<text text-anchor="middle" x="1142.56" y="-85.8" font-family="Times,serif" font-size="14.00">real input</text>
+</g>
+<!-- D&#45;&gt;e -->
+<g id="edge13" class="edge" data-name="D-&gt;e">
+
+<path fill="none" stroke="black" d="M1020.27,-63.93C1041.71,-68.54 1067.28,-74.04 1089.41,-78.79"/>
+<polygon fill="black" stroke="black" points="1088.64,-82.21 1099.15,-80.89 1090.11,-75.36 1088.64,-82.21"/>
+<text text-anchor="middle" x="1054.84" y="-78.2" font-family="Times,serif" font-size="14.00">stdout</text>
+</g>
+<!-- E -->
+<g id="node5" class="node" pointer-events="visible" data-name="E">
+
+<polygon fill="none" stroke="black" points="1354.64,-74.6 1265.63,-74.6 1265.63,-33.4 1354.64,-33.4 1354.64,-74.6"/>
+<text text-anchor="middle" x="1310.13" y="-58.2" font-family="Times,serif" font-size="14.00">选手代码</text>
+<text text-anchor="middle" x="1310.13" y="-41.4" font-family="Times,serif" font-size="14.00">（第二次运行）</text>
+</g>
+<!-- f -->
+<g id="node12" class="node" pointer-events="visible" data-name="f">
+
+<ellipse fill="none" stroke="black" cx="1142.56" cy="-18" rx="52.7" ry="18"/>
+<text text-anchor="middle" x="1142.56" y="-13.8" font-family="Times,serif" font-size="14.00">real output</text>
+</g>
+<!-- E&#45;&gt;f -->
+<!-- a1 --><g id="edge15" class="edge" data-name="E-&gt;f" data-comment="a1">
+
+<path fill="none" stroke="black" d="M1265.21,-44.45C1244.88,-40.03 1220.5,-34.73 1198.92,-30.04"/>
+<polygon fill="black" stroke="black" points="1199.92,-26.67 1189.41,-27.97 1198.43,-33.51 1199.92,-26.67"/>
+<text text-anchor="middle" x="1230.27" y="-45.2" font-family="Times,serif" font-size="14.00">stdout</text>
+</g>
+<g id="node6" class="node" pointer-events="visible" data-name="a1">
+
+<ellipse fill="none" stroke="black" cx="40.01" cy="-126" rx="40.01" ry="18"/>
+<text text-anchor="middle" x="40.01" y="-121.8" font-family="Times,serif" font-size="14.00">数据输入</text>
+</g>
+<!-- a1&#45;&gt;A -->
+<!-- a1&#45;&gt;A -->
+<g id="edge5" class="edge" data-name="a1-&gt;A">
+
+<path fill="none" stroke="black" d="M40.01,-107.59C40.01,-100.28 40.01,-91.69 40.01,-83.56"/>
+<polygon fill="black" stroke="black" points="43.51,-83.68 40.01,-73.68 36.51,-83.68 43.51,-83.68"/>
+<text text-anchor="middle" x="28.61" y="-85.8" font-family="Times,serif" font-size="14.00">stdin</text>
+</g>
+<!-- a2 -->
+<g id="node7" class="node" pointer-events="visible" data-name="a2">
+
+<ellipse fill="none" stroke="black" cx="655.3" cy="-126" rx="40.01" ry="18"/>
+<text text-anchor="middle" x="655.3" y="-121.8" font-family="Times,serif" font-size="14.00">数据输入</text>
+</g>
+<!-- a2&#45;&gt;C -->
+<!-- a2&#45;&gt;C -->
+<g id="edge9" class="edge" data-name="a2-&gt;C">
+
+<path fill="none" stroke="black" d="M655.3,-107.59C655.3,-100.28 655.3,-91.69 655.3,-83.56"/>
+<polygon fill="black" stroke="black" points="658.8,-83.68 655.3,-73.68 651.8,-83.68 658.8,-83.68"/>
+<text text-anchor="middle" x="643.9" y="-85.8" font-family="Times,serif" font-size="14.00">inf</text>
+</g>
+<!-- a3 -->
+
+<!-- a3&#45;&gt;E -->
+
+<g id="edge7" class="edge" data-name="b-&gt;B" data-comment="a3-&gt;E">
+
+<path fill="none" stroke="black" d="M238.65,-54C254.68,-54 273.06,-54 290,-54"/>
+<polygon fill="black" stroke="black" points="289.94,-57.5 299.94,-54 289.94,-50.5 289.94,-57.5"/>
+<text text-anchor="middle" x="269.9" y="-58.2" font-family="Times,serif" font-size="14.00">stdin</text>
+</g><g id="edge10" class="edge" data-name="c-&gt;C" data-comment="a3-&gt;E">
+
+<path fill="none" stroke="black" d="M556.16,-54C569.85,-54 584.96,-54 599.14,-54"/>
+<polygon fill="black" stroke="black" points="598.74,-57.5 608.74,-54 598.74,-50.5 598.74,-57.5"/>
+<text text-anchor="middle" x="583.23" y="-58.2" font-family="Times,serif" font-size="14.00">ouf</text>
+</g><g id="edge12" class="edge" data-name="d-&gt;D" data-comment="a3-&gt;E">
+
+<path fill="none" stroke="black" d="M875.07,-54C887.9,-54 901.73,-54 914.82,-54"/>
+<polygon fill="black" stroke="black" points="914.57,-57.5 924.57,-54 914.57,-50.5 914.57,-57.5"/>
+<text text-anchor="middle" x="900.6" y="-58.2" font-family="Times,serif" font-size="14.00">inf</text>
+</g><g id="edge14" class="edge" data-name="e-&gt;E" data-comment="a3-&gt;E">
+
+<path fill="none" stroke="black" d="M1184.49,-81.1C1205.46,-76.54 1231.3,-70.92 1254,-65.99"/>
+<polygon fill="black" stroke="black" points="1254.69,-69.42 1263.72,-63.87 1253.2,-62.58 1254.69,-69.42"/>
+<text text-anchor="middle" x="1230.27" y="-78.2" font-family="Times,serif" font-size="14.00">stdin</text>
+</g>
+<!-- e&#45;&gt;f -->
+
+<!-- e&#45;&gt;f -->
+
+<!-- e&#45;&gt;f -->
+<!-- f&#45;&gt;D -->
+<g id="edge16" class="edge" data-name="f-&gt;D">
+
+<path fill="none" stroke="black" d="M1097.22,-27.53C1077.01,-31.87 1052.83,-37.07 1031.27,-41.7"/>
+<polygon fill="black" stroke="black" points="1030.79,-38.23 1021.75,-43.75 1032.26,-45.07 1030.79,-38.23"/>
+<text text-anchor="middle" x="1054.84" y="-45.2" font-family="Times,serif" font-size="14.00">ouf</text>
+</g>
+<!-- g -->
+<g id="node13" class="node" pointer-events="visible" data-name="g">
+
+<ellipse fill="none" stroke="black" cx="973.05" cy="-126" rx="40.01" ry="18"/>
+<text text-anchor="middle" x="973.05" y="-121.8" font-family="Times,serif" font-size="14.00">数据输出</text>
+</g>
+<!-- g&#45;&gt;D -->
+<!-- g&#45;&gt;D -->
+<g id="edge17" class="edge" data-name="g-&gt;D">
+
+<path fill="none" stroke="black" d="M973.05,-107.59C973.05,-100.28 973.05,-91.69 973.05,-83.56"/>
+<polygon fill="black" stroke="black" points="976.55,-83.68 973.05,-73.68 969.55,-83.68 976.55,-83.68"/>
+<text text-anchor="middle" x="961.65" y="-85.8" font-family="Times,serif" font-size="14.00">ans</text>
+</g>
+</g>
+</svg>

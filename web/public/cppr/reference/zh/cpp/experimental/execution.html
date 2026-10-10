@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr" class="client-nojs">
+<head>
+<title>执行库</title>
+<meta charset="UTF-8">
+<meta name="generator" content="MediaWiki 1.21.2">
+<link rel="shortcut icon" href="../../../common/favicon.ico">
+<link rel="stylesheet" href="../../../common/ext.css">
+<meta name="ResourceLoaderDynamicStyles" content="">
+<link rel="stylesheet" href="../../../common/site_modules.css">
+<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}#toc{display:none}.editsection{display:none}
+/* cache key: mwiki1-mwiki_zh_:resourceloader:filter:minify-css:7:15cea3ec788a65b5187d4018eed543bf */</style>
+
+<script src="../../../common/startup_scripts.js"></script>
+<script>if(window.mw){
+mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"cpp/experimental/execution","wgTitle":"cpp/experimental/execution","wgCurRevisionId":92734,"wgArticleId":15942,"wgIsArticle":true,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":[],"wgBreakFrames":false,"wgPageContentLanguage":"zh","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"zh","wgMonthNames":["","1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],"wgMonthNamesShort":["","1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],"wgRelevantPageName":"cpp/experimental/execution","wgUserVariant":"zh","wgRestrictionEdit":[],"wgRestrictionMove":[]});
+}</script><script>if(window.mw){
+mw.loader.implement("user.options",function(){mw.user.options.set({"ccmeonemails":0,"cols":80,"date":"default","diffonly":0,"disablemail":0,"disablesuggest":0,"editfont":"default","editondblclick":0,"editsection":0,"editsectiononrightclick":0,"enotifminoredits":0,"enotifrevealaddr":0,"enotifusertalkpages":1,"enotifwatchlistpages":0,"extendwatchlist":0,"externaldiff":0,"externaleditor":0,"fancysig":0,"forceeditsummary":0,"gender":"unknown","hideminor":0,"hidepatrolled":0,"imagesize":2,"justify":0,"math":1,"minordefault":0,"newpageshidepatrolled":0,"nocache":0,"noconvertlink":0,"norollbackdiff":0,"numberheadings":0,"previewonfirst":0,"previewontop":1,"quickbar":5,"rcdays":7,"rclimit":50,"rememberpassword":0,"rows":25,"searchlimit":20,"showhiddencats":0,"showjumplinks":1,"shownumberswatching":1,"showtoc":0,"showtoolbar":1,"skin":"cppreference2","stubthreshold":0,"thumbsize":2,"underline":2,"uselivepreview":0,"usenewrc":0,"watchcreations":0,"watchdefault":0,"watchdeletion":0,
+"watchlistdays":3,"watchlisthideanons":0,"watchlisthidebots":0,"watchlisthideliu":0,"watchlisthideminor":0,"watchlisthideown":0,"watchlisthidepatrolled":0,"watchmoves":0,"wllimit":250,"variant":"zh","language":"zh","searchNs0":true,"searchNs1":false,"searchNs2":false,"searchNs3":false,"searchNs4":false,"searchNs5":false,"searchNs6":false,"searchNs7":false,"searchNs8":false,"searchNs9":false,"searchNs10":false,"searchNs11":false,"searchNs12":false,"searchNs13":false,"searchNs14":false,"searchNs15":false,"gadget-MathJax":1,"gadget-ColiruCompiler":1});;},{},{});mw.loader.implement("user.tokens",function(){mw.user.tokens.set({"editToken":"+\\","patrolToken":false,"watchToken":false});;},{},{});
+/* cache key: mwiki1-mwiki_zh_:resourceloader:filter:minify-js:7:258d7cd6aa9aa67dee25e01fb6a9e505 */
+}</script>
+<script>if(window.mw){
+mw.loader.load(["mediawiki.page.startup","mediawiki.legacy.wikibits","mediawiki.legacy.ajax"]);
+}</script>
+<style type="text/css">/*<![CDATA[*/
+.source-cpp {line-height: normal;}
+.source-cpp li, .source-cpp pre {
+	line-height: normal; border: 0px none white;
+}
+/**
+ * GeSHi Dynamically Generated Stylesheet
+ * --------------------------------------
+ * Dynamically generated stylesheet for cpp
+ * CSS class: source-cpp, CSS id: 
+ * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann
+ * (http://qbnz.com/highlighter/ and http://geshi.org/)
+ * --------------------------------------
+ */
+.cpp.source-cpp .de1, .cpp.source-cpp .de2 {font: normal normal 1em/1.2em monospace; margin:0; padding:0; background:none; vertical-align:top;}
+.cpp.source-cpp  {font-family:monospace;}
+.cpp.source-cpp .imp {font-weight: bold; color: red;}
+.cpp.source-cpp li, .cpp.source-cpp .li1 {font-weight: normal; vertical-align:top;}
+.cpp.source-cpp .ln {width:1px;text-align:right;margin:0;padding:0 2px;vertical-align:top;}
+.cpp.source-cpp .li2 {font-weight: bold; vertical-align:top;}
+.cpp.source-cpp .kw1 {color: #0000dd;}
+.cpp.source-cpp .kw2 {color: #0000ff;}
+.cpp.source-cpp .kw3 {color: #0000dd;}
+.cpp.source-cpp .kw4 {color: #0000ff;}
+.cpp.source-cpp .co1 {color: #909090;}
+.cpp.source-cpp .co2 {color: #339900;}
+.cpp.source-cpp .coMULTI {color: #ff0000; font-style: italic;}
+.cpp.source-cpp .es0 {color: #008000; font-weight: bold;}
+.cpp.source-cpp .es1 {color: #008000; font-weight: bold;}
+.cpp.source-cpp .es2 {color: #008000; font-weight: bold;}
+.cpp.source-cpp .es3 {color: #008000; font-weight: bold;}
+.cpp.source-cpp .es4 {color: #008000; font-weight: bold;}
+.cpp.source-cpp .es5 {color: #008000; font-weight: bold;}
+.cpp.source-cpp .br0 {color: #008000;}
+.cpp.source-cpp .sy0 {color: #008000;}
+.cpp.source-cpp .sy1 {color: #000080;}
+.cpp.source-cpp .sy2 {color: #000040;}
+.cpp.source-cpp .sy3 {color: #000040;}
+.cpp.source-cpp .sy4 {color: #008080;}
+.cpp.source-cpp .st0 {color: #008000;}
+.cpp.source-cpp .nu0 {color: #000080;}
+.cpp.source-cpp .nu6 {color: #000080;}
+.cpp.source-cpp .nu8 {color: #000080;}
+.cpp.source-cpp .nu12 {color: #000080;}
+.cpp.source-cpp .nu16 {color:#000080;}
+.cpp.source-cpp .nu17 {color:#000080;}
+.cpp.source-cpp .nu18 {color:#000080;}
+.cpp.source-cpp .nu19 {color:#000080;}
+.cpp.source-cpp .ln-xtra, .cpp.source-cpp li.ln-xtra, .cpp.source-cpp div.ln-xtra {background-color: #ffc;}
+.cpp.source-cpp span.xtra { display:block; }
+
+/*]]>*/
+</style><style type="text/css">/*<![CDATA[*/
+.source-text {line-height: normal;}
+.source-text li, .source-text pre {
+	line-height: normal; border: 0px none white;
+}
+/**
+ * GeSHi Dynamically Generated Stylesheet
+ * --------------------------------------
+ * Dynamically generated stylesheet for text
+ * CSS class: source-text, CSS id: 
+ * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann
+ * (http://qbnz.com/highlighter/ and http://geshi.org/)
+ * --------------------------------------
+ */
+.text.source-text .de1, .text.source-text .de2 {font: normal normal 1em/1.2em monospace; margin:0; padding:0; background:none; vertical-align:top;}
+.text.source-text  {font-family:monospace;}
+.text.source-text .imp {font-weight: bold; color: red;}
+.text.source-text li, .text.source-text .li1 {font-weight: normal; vertical-align:top;}
+.text.source-text .ln {width:1px;text-align:right;margin:0;padding:0 2px;vertical-align:top;}
+.text.source-text .li2 {font-weight: bold; vertical-align:top;}
+.text.source-text .ln-xtra, .text.source-text li.ln-xtra, .text.source-text div.ln-xtra {background-color: #ffc;}
+.text.source-text span.xtra { display:block; }
+
+/*]]>*/
+</style><!--[if lt IE 7]><style type="text/css">body{behavior:url("/mwiki/skins/cppreference2/csshover.min.htc")}</style><![endif]--></head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-cpp_experimental_execution skin-cppreference2 action-view">
+        <!-- header -->
+        <!-- /header -->
+        <!-- content -->
+<div id="cpp-content-base">
+            <div id="content">
+                <a id="top"></a>
+                <div id="mw-js-message" style="display:none;"></div>
+                                <!-- firstHeading -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8HW0LXMYCY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-8HW0LXMYCY');
+</script>
+                <h1 id="firstHeading" class="firstHeading">执行库</h1>
+                <!-- /firstHeading -->
+                <!-- bodyContent -->
+                <div id="bodyContent">
+                                        <!-- tagline -->
+                    <div id="siteSub">来自cppreference.com</div>
+                    <!-- /tagline -->
+                                        <!-- subtitle -->
+                    <div id="contentSub"><span class="subpages">&lt; <a href="../../cpp.html" title="cpp">cpp</a>‎ | <a href="../experimental.html" title="cpp/experimental">experimental</a></span></div>
+                    <!-- /subtitle -->
+                                                            <!-- bodycontent -->
+                    <div id="mw-content-text" lang="zh" dir="ltr" class="mw-content-ltr"><p><br>
+</p>
+<p>执行库提供了一个用于管理通用执行资源上的异步执行的框架，针对标准 C++ 库设计。
+</p><p>这个库的目标是提供针对异步操作的基本术语类型，并允许以一种简便和可组合的方式构建任务执行图。
+</p>
+<h2><span class="mw-headline" id=".E5.BA.93.E8.8C.83.E5.9B.B4.E7.9A.84.E5.AE.9A.E4.B9.89">库范围的定义</span></h2>
+<ul><li> <b>发送器</b>：对要发送去执行的工作的描述。产生一个操作状态（见下文）。
+</li></ul>
+<dl><dd><ul><li> 发送器将它们的结果异步“发送”给称为“接收器”（见下文）的监听者。
+</li><li> 可以用通用算法把发送器组合成<b>任务图</b>。
+</li><li> <b>发送器工厂/适配器</b>是捕捉了满足 <span class="t-lc">sender</span> 概念的对象中的常见异步模式的通用算法。
+</li></ul>
+</dd></dl>
+<ul><li> <b>接收器</b>：泛化的回调，它消耗或“接受”由发送器产生的异步结果。
+</li></ul>
+<dl><dd><ul><li> 接收器包含三个不同“通道”，发送器可以通过它们传播成功、失败和取消的结果，分别称为“值”、“错误”和“停止”通道。
+</li><li> 接收器提供一个可扩展的执行环境：可以由消耗方用来参数化异步操作的一组键/值对。
+</li></ul>
+</dd></dl>
+<ul><li> <b>操作状态</b>：包含异步操作所需状态的对象。
+</li></ul>
+<dl><dd><ul><li> 当发送器和接收器被传递给 <span class="t-lc">std::execution::connect</span> 时，它们就被连接起来。
+</li><li> 将发送器和接收器连接起来的结果就是一个操作状态。
+</li><li> 当在操作状态上调用“<code>start</code>”后，其工作才会加入队列执行。
+</li><li> 一旦启动，则操作状态的生存期在异步操作完成前都不会结束，且其地址必须稳定。
+</li></ul>
+</dd></dl>
+<ul><li> <b>调度器</b>：对执行上下文的轻量级句柄。
+</li></ul>
+<dl><dd><ul><li> 执行上下文是诸如线程池或 GPU 流这样的异步执行源。
+</li><li> 调度器是一个工厂或发送器，它在执行上下文所拥有的某个执行线程中完成其接收器。
+</li></ul>
+</dd></dl>
+<h2><span class="mw-headline" id=".E5.BA.93.E5.B7.A5.E5.85.B7">库工具</span></h2>
+<h3><span class="mw-headline" id=".E5.8F.91.E9.80.81.E5.99.A8">发送器</span></h3>
+<h4><span class="mw-headline" id=".E5.8F.91.E9.80.81.E5.99.A8.E5.B7.A5.E5.8E.82">发送器工厂</span></h4>
+<p>发送器工厂是返回发送器的函数，且其形参具有使得 <span class="t-lc">sender</span> 为 <span class="t-lc">false</span> 的类型。
+</p><p>以下为发送器工厂：
+</p>
+<table class="t-dsc-begin">
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>在标头 <code><a href="../header/experimental/execution.html" title="cpp/header/experimental/execution">&lt;experimental/execution&gt;</a></code> 定义 </div>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>在命名空间 <code>std::execution</code> 定义</div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/just.html" title="cpp/experimental/execution/just"> <span class="t-lines"><span>just</span></span></a></div></div>
+</td>
+<td>  接受一组可变数量的实参并返回一个发送器，当它被连接并启动时，将通过把各实参传递给接收器的值完成函数而同步地完成。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/just_error.html" title="cpp/experimental/execution/just error"> <span class="t-lines"><span>just_error</span></span></a></div></div>
+</td>
+<td>  接受单个实参并返回一个发送器，当它被连接并启动时，将通过把实参传递给接收器的错误完成函数而同步地完成。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/just_stopped.html" title="cpp/experimental/execution/just stopped"> <span class="t-lines"><span>just_stopped</span></span></a></div></div>
+</td>
+<td>  可以无实参调用的函数，它返回的发送器当被连接并启动时，将通过调用接收器的停止完成函数而同步地完成。 <br> <span class="t-mark">(函数)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/read.html" title="cpp/experimental/execution/read"> <span class="t-lines"><span>read</span></span></a></div></div>
+</td>
+<td>  可以一个查询对象（例如 <span class="t-lc">std::get_stop_token</span>）调用的函数，它所返回的发送器当被连接到接收器并启动时，将以接收器的环境来同步地调用查询对象，并将结果传递给接收器的值完成函数。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/schedule.html" title="cpp/experimental/execution/schedule"> <span class="t-lines"><span>schedule</span></span></a></div></div>
+</td>
+<td>  接受一个调度器的函数，其所返回的发送器当被连接并启动时，将尝试把一次没有结果数据的值完成操作加入属于此调度器的关联执行资源的某个执行代理的队列。该操作也可以以错误（例如任务入队的尝试失败）或停止（例如在任务出队前在执行资源上请求了停止）完成。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+</table>
+<h4><span class="mw-headline" id=".E5.8F.91.E9.80.81.E5.99.A8.E9.80.82.E9.85.8D.E5.99.A8">发送器适配器</span></h4>
+<p>发送器适配器是返回发送器的函数，且它包含至少一个形参的类型满足 <span class="t-lc">sender</span> 概念，且所返回的发送器是此适配器函数的发送器实参的父发送器。
+</p><p>以下为发送器适配器：
+</p>
+<table class="t-dsc-begin">
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>在标头 <code><a href="../header/experimental/execution.html" title="cpp/header/experimental/execution">&lt;experimental/execution&gt;</a></code> 定义 </div>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>在命名空间 <code>std::execution</code> 定义</div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="https://zh.cppreference.com/mwiki/index.php?title=cpp/execution/bulk&amp;action=edit&amp;redlink=1" class="new" title="cpp/execution/bulk（页面不存在）"> <span class="t-lines"><span>bulk</span></span></a></div></div>
+</td>
+<td>  创建一个多发发送器，它以所提供的形状中的每个索引和输入发送器所发送的值的来调用函数。该发送器在所有调用完成后，或发送错误时完成。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/ensure_started.html" title="cpp/experimental/execution/ensure started"> <span class="t-lines"><span>ensure_started</span></span></a></div></div>
+</td>
+<td>  急切地启动一个发送器，返回一个发送器，它将把结果递交给它所连接并启动的接收器（如果有）。如果结果发送器并未连接到接收器，或如果结果的操作状态并未启动，那么忽略其结果。如果这种发送器在底层操作完成前被销毁，则操作继续脱离运行。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/into_variant.html" title="cpp/experimental/execution/into variant"> <span class="t-lines"><span>into_variant</span></span></a></div></div>
+</td>
+<td>  返回一个发送器，发送输入发送器发送的所有可能类型集合的元组的变体。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/let_error.html" title="cpp/experimental/execution/let error"> <span class="t-lines"><span>let_error</span></span></a></div></div>
+</td>
+<td>  返回表示一个串联到输入发送器的节点的发送器，它以输入发送器的错误（若发生）调用所提供的函数。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/let_value.html" title="cpp/experimental/execution/let value"> <span class="t-lines"><span>let_value</span></span></a></div></div>
+</td>
+<td>  返回表示一个串联到输入发送器的节点的发送器，启动时，以输入发送器所发送的值为实参调用所提供的函数。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/let_stopped.html" title="cpp/experimental/execution/let stopped"> <span class="t-lines"><span>let_stopped</span></span></a></div></div>
+</td>
+<td>  返回表示一个串联到输入发送器上的节点的发送器，当发送了“停止”信号时，以输入发送器的停止令牌调用所提供的函数。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/on.html" title="cpp/experimental/execution/on"> <span class="t-lines"><span>on</span></span></a></div></div>
+</td>
+<td>  在某个属于于所提供调度器关联的执行资源的执行代理上启动所提供的发送器。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="https://zh.cppreference.com/mwiki/index.php?title=cpp/experimental/execution/split&amp;action=edit&amp;redlink=1" class="new" title="cpp/experimental/execution/split（页面不存在）"> <span class="t-lines"><span>split</span></span></a></div></div>
+</td>
+<td>  如果所提供的发送器是多发的，则返回该发送器。否则返回发送与所提供发送器所发送的值等价的值的多发发送器。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/stopped_as_error.html" title="cpp/experimental/execution/stopped as error"> <span class="t-lines"><span>stopped_as_error</span></span></a></div></div>
+</td>
+<td>  返回将停止通道映射为一个错误的发送器。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/stopped_as_optional.html" title="cpp/experimental/execution/stopped as optional"> <span class="t-lines"><span>stopped_as_optional</span></span></a></div></div>
+</td>
+<td>  返回将值通道映射为 <span class="mw-geshi cpp source-cpp"><a href="../utility/optional.html"><span class="kw1077">std::<span class="me2">optional</span></span></a><span class="sy1">&lt;</span><a href="../types/decay.html"><span class="kw632">std::<span class="me2">decay_t</span></span></a><span class="sy1">&lt;</span>T<span class="sy1">&gt;&gt;</span></span> 并将停止通道映射为 <span class="mw-geshi cpp source-cpp"><a href="../utility/optional/nullopt.html"><span class="kw1081">std::<span class="me2">nullopt</span></span></a></span> 的发送器。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/then.html" title="cpp/experimental/execution/then"> <span class="t-lines"><span>then</span></span></a></div></div>
+</td>
+<td>  以一个节点串联输入发送器的任务图，该节点表示以输入发送器所发送的各值为实参调用所提供的函数。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/transfer.html" title="cpp/experimental/execution/transfer"> <span class="t-lines"><span>transfer</span></span></a></div></div>
+</td>
+<td>  返回描述从输入发送器的执行上下文迁移到目标调度器的执行上下文的发送器 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/upon_error.html" title="cpp/experimental/execution/upon error"> <span class="t-lines"><span>upon_error</span></span></a></div></div>
+</td>
+<td>  以一个节点串联输入发送器的任务图，该节点表示当发送错误时以输入发送器所发送的错误调用所提供的函数。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/upon_stopped.html" title="cpp/experimental/execution/upon stopped"> <span class="t-lines"><span>upon_stopped</span></span></a></div></div>
+</td>
+<td>  以一个节点串联输入发送器的任务图，该节点表示当被发送“停止”信号时以输入发送器的停止行为调用所提供的函数。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/when_all.html" title="cpp/experimental/execution/when all"> <span class="t-lines"><span>when_all</span></span></a></div></div>
+</td>
+<td>  当所有输入发送器都已完成时完成。其值为各个输入发送器所发送的值，按传递给 <code>when_all</code> 的实参顺序。在最后完成的输入发送器所在执行资源上内联完成。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+</table>
+<h3><span class="mw-headline" id=".E5.8F.91.E9.80.81.E5.99.A8.E6.B6.88.E8.80.97.E5.99.A8">发送器消耗器</span></h3>
+<p>发送器消耗器是一种算法，它接受一个或多个发送器为参数且并不返回发送器。
+</p><p>以下为发送器消耗器：
+</p>
+<table class="t-dsc-begin">
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>在标头 <code><a href="../header/experimental/execution.html" title="cpp/header/experimental/execution">&lt;experimental/execution&gt;</a></code> 定义 </div>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>在命名空间 <code>std::execution</code> 定义</div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="https://zh.cppreference.com/mwiki/index.php?title=cpp/experimental/execution/start_detached&amp;action=edit&amp;redlink=1" class="new" title="cpp/experimental/execution/start detached（页面不存在）"> <span class="t-lines"><span>start_detached</span></span></a></div></div>
+</td>
+<td>  当所提供发送器完成时完成，或当发送器发送错误时调用 <span class="t-lc"><a href="../error/terminate.html" title="cpp/error/terminate">std::terminate</a></span>。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+
+<tr>
+<td colspan="2"> <h5> <span class="mw-headline" id=".E7.AE.A1.E7.90.86.E5.BD.93.E5.89.8D.E7.BA.BF.E7.A8.8B.E7.9A.84.E5.87.BD.E6.95.B0"> 管理当前线程的函数 </span></h5>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>在标头 <code><a href="../header/experimental/execution.html" title="cpp/header/experimental/execution">&lt;experimental/execution&gt;</a></code> 定义 </div>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>在命名空间 <code>std::this_thread</code> 定义</div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="execution/thread/this_thread/sync_wait.html" title="cpp/experimental/execution/thread/this thread/sync wait"> <span class="t-lines"><span>sync_wait</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx26">(C++26)</span></span></span></div></div>
+</td>
+<td>  阻塞当前线程直至所传递的发送器完成，并返回该发送器所完成的值（如果有） <br> <span class="t-mark">(函数模板)</span> </td></tr>
+</table>
+<h3><span class="mw-headline" id=".E6.80.A5.E5.88.87.E6.89.A7.E8.A1.8C">急切执行</span></h3>
+<p>允许“发射后不管”的急切任务提交可调用体给调度器。
+</p>
+<table class="t-dsc-begin">
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>在标头 <code><a href="../header/experimental/execution.html" title="cpp/header/experimental/execution">&lt;experimental/execution&gt;</a></code> 定义 </div>
+</td></tr>
+
+<tr class="t-dsc-header">
+<td colspan="2"> <div>在命名空间 <code>std::execution</code> 定义</div>
+</td></tr>
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="https://zh.cppreference.com/mwiki/index.php?title=cpp/experimental/execution/execute&amp;action=edit&amp;redlink=1" class="new" title="cpp/experimental/execution/execute（页面不存在）"> <span class="t-lines"><span>execute</span></span></a></div></div>
+</td>
+<td>  提交所提供的函数在所提供的调度器上执行。 <br> <span class="t-mark">(函数模板)</span> </td></tr>
+</table>
+<h3><span class="mw-headline" id=".E7.A4.BA.E4.BE.8B">示例</span></h3>
+<div class="t-example"><p>此示例的一个版本在 <a rel="nofollow" class="external text" href="https://godbolt.org/z/vdxGsxsKd">godbolt.org</a>，它使用的是 <a rel="nofollow" class="external text" href="https://github.com/NVIDIA/stdexec">stdexec</a>，一个 <span class="t-lc">std::execution</span> 的实验性参考实现。</p><div class="t-example-live-link"><div class="coliru-btn coliru-btn-run-init">运行此代码</div></div>
+<div dir="ltr" class="mw-geshi" style="text-align: left;"><div class="cpp source-cpp"><pre class="de1"><span class="co2">#include &lt;cstdio&gt;</span>
+<span class="co2">#include &lt;execution&gt;</span>
+<span class="co2">#include &lt;string&gt;</span>
+<span class="co2">#include &lt;thread&gt;</span>
+<span class="co2">#include &lt;utility&gt;</span>
+<span class="kw1">using</span> <span class="kw1">namespace</span> std<span class="sy4">::</span><span class="me2">literals</span><span class="sy4">;</span>
+ 
+<span class="kw4">int</span> main<span class="br0">(</span><span class="br0">)</span>
+<span class="br0">{</span>
+    std<span class="sy4">::</span><span class="me2">execution</span><span class="sy4">::</span><span class="me2">run_loop</span> loop<span class="sy4">;</span>
+ 
+    <a href="../thread/jthread.html"><span class="kw3237">std::<span class="me2">jthread</span></span></a> worker<span class="br0">(</span><span class="br0">[</span><span class="sy3">&amp;</span><span class="br0">]</span><span class="br0">(</span><a href="../thread/stop_token.html"><span class="kw3257">std::<span class="me2">stop_token</span></span></a> st<span class="br0">)</span>
+    <span class="br0">{</span>
+        <a href="../thread/stop_callback.html"><span class="kw3255">std::<span class="me2">stop_callback</span></span></a> cb<span class="br0">{</span> st, <span class="br0">[</span><span class="sy3">&amp;</span><span class="br0">]</span><span class="br0">{</span> loop.<span class="me1">finish</span><span class="br0">(</span><span class="br0">)</span><span class="sy4">;</span> <span class="br0">}</span><span class="br0">}</span><span class="sy4">;</span>
+        loop.<span class="me1">run</span><span class="br0">(</span><span class="br0">)</span><span class="sy4">;</span>
+    <span class="br0">}</span><span class="br0">)</span><span class="sy4">;</span>
+ 
+    std<span class="sy4">::</span><span class="me2">execution</span><span class="sy4">::</span><span class="me2">sender</span> <span class="kw4">auto</span> hello <span class="sy1">=</span> std<span class="sy4">::</span><span class="me2">execution</span><span class="sy4">::</span><span class="me2">just</span><span class="br0">(</span><span class="st0">"hello world"</span>s<span class="br0">)</span><span class="sy4">;</span>
+    std<span class="sy4">::</span><span class="me2">execution</span><span class="sy4">::</span><span class="me2">sender</span> <span class="kw4">auto</span> print
+        <span class="sy1">=</span> std<span class="sy4">::</span><span class="me2">move</span><span class="br0">(</span>hello<span class="br0">)</span>
+        <span class="sy3">|</span> std<span class="sy4">::</span><span class="me2">execution</span><span class="sy4">::</span><span class="me2">then</span><span class="br0">(</span><span class="br0">[</span><span class="br0">]</span><span class="br0">(</span><a href="../string/basic_string.html"><span class="kw1233">std::<span class="me2">string</span></span></a> msg<span class="br0">)</span>
+        <span class="br0">{</span>
+            <a href="../io/c/puts.html"><span class="kw1834">std::<span class="me2">puts</span></span></a><span class="br0">(</span>msg.<span class="me1">c_str</span><span class="br0">(</span><span class="br0">)</span><span class="br0">)</span><span class="sy4">;</span>
+            <span class="kw1">return</span> <span class="nu0">0</span><span class="sy4">;</span>
+        <span class="br0">}</span><span class="br0">)</span><span class="sy4">;</span>
+ 
+    std<span class="sy4">::</span><span class="me2">execution</span><span class="sy4">::</span><span class="me2">scheduler</span> <span class="kw4">auto</span> io_thread <span class="sy1">=</span> loop.<span class="me1">get_scheduler</span><span class="br0">(</span><span class="br0">)</span><span class="sy4">;</span>
+    std<span class="sy4">::</span><span class="me2">execution</span><span class="sy4">::</span><span class="me2">sender</span> <span class="kw4">auto</span> work <span class="sy1">=</span> std<span class="sy4">::</span><span class="me2">execution</span><span class="sy4">::</span><span class="me2">on</span><span class="br0">(</span>io_thread, std<span class="sy4">::</span><span class="me2">move</span><span class="br0">(</span>print<span class="br0">)</span><span class="br0">)</span><span class="sy4">;</span>
+ 
+    <span class="kw4">auto</span> <span class="br0">[</span>result<span class="br0">]</span> <span class="sy1">=</span> std<span class="sy4">::</span><span class="me2">this_thread</span><span class="sy4">::</span><span class="me2">sync_wait</span><span class="br0">(</span>std<span class="sy4">::</span><span class="me2">move</span><span class="br0">(</span>work<span class="br0">)</span><span class="br0">)</span>.<span class="me1">value</span><span class="br0">(</span><span class="br0">)</span><span class="sy4">;</span>
+ 
+    <span class="kw1">return</span> result<span class="sy4">;</span>
+<span class="br0">}</span></pre></div></div>
+<p>输出：
+</p>
+<div dir="ltr" class="mw-geshi" style="text-align: left;"><div class="text source-text"><pre class="de1">hello world</pre></div></div> 
+</div>
+<h3><span class="mw-headline" id=".E5.8F.82.E9.98.85">参阅</span></h3>
+<table class="t-dsc-begin">
+
+<tr class="t-dsc">
+<td>  <div class="t-dsc-member-div"><div><a href="../thread/async.html" title="cpp/thread/async"> <span class="t-lines"><span>async</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div>
+</td>
+<td>  异步运行一个函数（有可能在新线程中执行），并返回将保有它的结果的 <span class="t-lc"><a href="../thread/future.html" title="cpp/thread/future">std::future</a></span> <br> <span class="t-mark">(函数模板)</span> </td></tr>
+</table>
+
+<!-- 
+NewPP limit report
+Preprocessor visited node count: 3394/1000000
+Preprocessor generated node count: 6346/1000000
+Post‐expand include size: 123996/4194304 bytes
+Template argument size: 30841/4194304 bytes
+Highest expansion depth: 20/40
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mwiki1-mwiki_zh_:pcache:idhash:15942-0!*!0!!zh!2!zh!* and timestamp 20240714194720 -->
+</div>                    <!-- /bodycontent -->
+                                        <!-- printfooter -->
+                    <div class="printfooter">
+                    来自“<a href="https://zh.cppreference.com/mwiki/index.php?title=cpp/experimental/execution&amp;oldid=92734">https://zh.cppreference.com/mwiki/index.php?title=cpp/experimental/execution&amp;oldid=92734</a>”                    </div>
+                    <!-- /printfooter -->
+                                                            <!-- catlinks -->
+                    <!-- /catlinks -->
+                                                            <div class="visualClear"></div>
+                    <!-- debughtml -->
+                                        <!-- /debughtml -->
+                </div>
+                <!-- /bodyContent -->
+            </div>
+        </div>
+        <!-- /content -->
+        <!-- footer -->
+        <div id="cpp-footer-base" class="noprint">
+            <div id="footer">
+                        <div id="cpp-navigation">
+            <h5>导航</h5>
+            <ul><li><a href="https://zh.cppreference.com/w/cpp/experimental/execution">Online version</a></li><li>Offline version retrieved 2024-09-15 16:01.</li></ul></div>
+                        <ul id="footer-info">
+                                    <li id="footer-info-lastmod"> 本页面最后修改于2024年7月14日 (星期日) 10:27。</li>
+                            </ul>
+                    </div>
+        </div>
+        <!-- /footer -->
+        <script>if(window.mw){
+mw.loader.state({"site":"loading","user":"missing","user.groups":"ready"});
+}</script>
+<script src="../../../common/skin_scripts.js"></script>
+<script>if(window.mw){
+mw.loader.load(["mediawiki.action.view.postEdit","mediawiki.user","mediawiki.page.ready","mediawiki.searchSuggest","mediawiki.hidpi","ext.gadget.MathJax","ext.gadget.ColiruCompiler"], null, true);
+}</script>
+<script src="../../../common/site_scripts.js"></script>
+<!-- Served in 0.944 secs. -->
+	</body>
+<!-- Cached 20240714194720 -->
+</html>

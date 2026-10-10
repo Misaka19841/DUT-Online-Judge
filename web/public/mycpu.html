@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RISC-V 编译运行前端</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #121a2f;
+      --text: #e8ecf8;
+      --muted: #98a2bd;
+      --ok: #34d399;
+      --err: #f87171;
+      --btn: #3b82f6;
+      --btn2: #475569;
+      --border: #25304a;
+      --input: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 20px;
+      display: grid;
+      gap: 16px;
+      min-width: 0;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      min-width: 0;
+    }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; min-width: 0; }
+    .grow { flex: 1; min-width: 220px; }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    h2 { font-size: 16px; margin: 0 0 8px; }
+    .muted { color: var(--muted); font-size: 13px; }
+    input, select, textarea {
+      width: 100%;
+      color: var(--text);
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 14px;
+    }
+    textarea {
+      min-height: 270px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-run { background: var(--btn); }
+    .btn-check { background: var(--btn2); }
+    .status {
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      border: 1px solid var(--border);
+    }
+    .ok { color: var(--ok); }
+    .err { color: var(--err); }
+    .grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .metric {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .metric .k { color: var(--muted); font-size: 12px; }
+    .metric .v { font-size: 20px; font-weight: 700; margin-top: 6px; }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 13px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      overflow: auto;
+      max-width: 100%;
+    }
+    .scroll-self { overflow: auto; max-width: 100%; }
+    .scroll-x { overflow-x: auto; overflow-y: hidden; max-width: 100%; }
+    .small { font-size: 12px; color: var(--muted); }
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      margin-top: 18px;
+      user-select: none;
+    }
+    .toggle input {
+      width: auto;
+      margin: 0;
+    }
+    .pipeline-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #0f172a;
+      padding: 8px;
+    }
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .legend .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>RISC-V 编译运行前端</h1>
+      <div class="muted"><code>a0(x10)</code>为主函数返回值地址，可用于输出。</div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div class="grow">
+          <label class="small">服务地址</label>
+          <input id="apiBase" value="http://10.7.41.72:18080" />
+        </div>
+        <div style="width:120px;">
+          <label class="small">语言</label>
+          <select id="lang">
+            <option value="asm">asm</option>
+            <option value="c">c</option>
+            <option value="cpp">cpp</option>
+          </select>
+        </div>
+        <div style="width:140px;">
+          <label class="small">max_cycles 上限</label>
+          <input id="maxCycles" type="number" min="1" step="1" value="2000000" />
+        </div>
+        <div style="width:120px;">
+          <label class="small">march</label>
+          <input id="march" value="rv32i" />
+        </div>
+        <div style="width:120px;">
+          <label class="small">mabi</label>
+          <input id="mabi" value="ilp32" />
+        </div>
+        <label class="toggle">
+          <input id="popcntToggle" type="checkbox" checked />
+          <span>启用自定义 POPCNT</span>
+        </label>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn-check" id="checkBtn">健康检查</button>
+        <button class="btn-run" id="runBtn">编译并运行</button>
+        <div id="status" class="status">就绪</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>源码输入</h2>
+      <textarea id="sourceText" class="scroll-self"></textarea>
+    </div>
+
+    <div class="card">
+      <h2>性能指标</h2>
+      <div id="metricGrid" class="grid"></div>
+    </div>
+
+    <div class="card">
+      <h2>异常处理</h2>
+      <div class="muted">展示 trap 与中断统计，以及关键 CSR 状态。</div>
+      <div id="exceptionGrid" class="grid"></div>
+    </div>
+
+    <div class="card">
+      <h2>内存管理（Cache）</h2>
+      <div class="muted">当前实现：主存 64MB，L1 D-Cache 4KB（直接映射，写回+写分配）。</div>
+      <div id="memoryGrid" class="grid"></div>
+    </div>
+
+    <div class="card">
+      <h2>RISC-V 指令</h2>
+      <pre id="disassembly" class="scroll-self"></pre>
+    </div>
+
+    <div class="card">
+      <h2>流水线可视化（IF/ID/EX/MEM/WB）</h2>
+      <div class="legend" id="pipelineLegend"></div>
+      <div class="pipeline-wrap">
+        <svg id="pipelineSvg" width="900" height="210"></svg>
+      </div>
+      <div class="muted" id="pipelineNote" style="margin-top:8px;"></div>
+    </div>
+
+    <div class="card">
+      <h2>原始响应 JSON</h2>
+      <pre id="rawJson" class="scroll-self"></pre>
+    </div>
+  </div>
+
+  <script>
+    const sourceDefault = [
+      ".section .text",
+      ".globl _start",
+      "_start:",
+      "  li a0, 43",
+      "  .word 0x0205150B",
+      "  li a7, 1",
+      "  ecall",
+      "  li a7, 10",
+      "  ecall",
+      ""
+    ].join("\n");
+
+    const els = {
+      apiBase: document.getElementById("apiBase"),
+      lang: document.getElementById("lang"),
+      maxCycles: document.getElementById("maxCycles"),
+      march: document.getElementById("march"),
+      mabi: document.getElementById("mabi"),
+      popcntToggle: document.getElementById("popcntToggle"),
+      sourceText: document.getElementById("sourceText"),
+      checkBtn: document.getElementById("checkBtn"),
+      runBtn: document.getElementById("runBtn"),
+      status: document.getElementById("status"),
+      metricGrid: document.getElementById("metricGrid"),
+      exceptionGrid: document.getElementById("exceptionGrid"),
+      memoryGrid: document.getElementById("memoryGrid"),
+      disassembly: document.getElementById("disassembly"),
+      pipelineSvg: document.getElementById("pipelineSvg"),
+      pipelineLegend: document.getElementById("pipelineLegend"),
+      pipelineNote: document.getElementById("pipelineNote"),
+      rawJson: document.getElementById("rawJson"),
+    };
+
+    els.sourceText.value = sourceDefault;
+
+    function setStatus(text, ok = true) {
+      els.status.textContent = text;
+      els.status.className = "status " + (ok ? "ok" : "err");
+    }
+
+    function renderMetrics(metrics = {}) {
+      const order = [
+        "cycles",
+        "retired",
+        "cpi",
+        "stall_count",
+        "flush_count",
+        "custom_popcnt_count",
+        "a0(x10)"
+      ];
+      const keys = [...order.filter(k => k in metrics)];
+      els.metricGrid.innerHTML = "";
+      if (!keys.length) {
+        els.metricGrid.innerHTML = "<div class='muted'>无指标</div>";
+        return;
+      }
+      keys.forEach(k => {
+        const d = document.createElement("div");
+        d.className = "metric";
+        d.innerHTML = `<div class="k">${k}</div><div class="v">${metrics[k]}</div>`;
+        els.metricGrid.appendChild(d);
+      });
+    }
+
+    function renderMetricGroup(target, metrics = {}, keys = []) {
+      target.innerHTML = "";
+      const present = keys.filter(k => k in metrics);
+      if (!present.length) {
+        target.innerHTML = "<div class='muted'>无指标</div>";
+        return;
+      }
+      present.forEach(k => {
+        const d = document.createElement("div");
+        d.className = "metric";
+        d.innerHTML = `<div class="k">${k}</div><div class="v">${metrics[k]}</div>`;
+        target.appendChild(d);
+      });
+    }
+
+    function summarizeRun(data, maxCycles) {
+      const cycles = data && data.metrics ? data.metrics.cycles : undefined;
+      const cycleText = Number.isFinite(cycles) ? `，实际执行 ${cycles} cycles` : "";
+      if (data.completed === true && data.halt_reason === "ecall_exit") {
+        return { text: "运行成功：程序正常退出" + cycleText, ok: true };
+      }
+      if (data.halt_reason === "max_cycles") {
+        return { text: `运行未完成：达到 max_cycles 上限 (${maxCycles})${cycleText}`, ok: false };
+      }
+      if (data.completed === true) {
+        return { text: "运行成功：程序已停止" + cycleText, ok: true };
+      }
+      return { text: "运行完成" + cycleText, ok: true };
+    }
+
+    function formatRunError(data) {
+      if (!data) return "unknown";
+      if (typeof data.error === "string" && data.error) return data.error;
+      if (data.error && typeof data.error === "object") {
+        if (data.error.stderr) return data.error.stderr;
+        if (data.error.phase) return `${data.error.phase} 失败`;
+        try {
+          return JSON.stringify(data.error);
+        } catch (_) {
+          return "error_object";
+        }
+      }
+      if (typeof data.sim_stderr === "string" && data.sim_stderr.trim()) return data.sim_stderr;
+      return "unknown";
+    }
+
+    function renderPipeline(trace = [], truncated = false, traceCount = 0) {
+      const svg = els.pipelineSvg;
+      const legend = els.pipelineLegend;
+      const note = els.pipelineNote;
+      const stages = ["IF", "ID", "EX", "MEM", "WB"];
+      const colors = {
+        IF: "#38bdf8",
+        ID: "#a78bfa",
+        EX: "#f59e0b",
+        MEM: "#34d399",
+        WB: "#f87171",
+      };
+
+      legend.innerHTML = stages.map(s => `<span><span class="dot" style="background:${colors[s]}"></span>${s}</span>`).join("");
+      if (!trace.length) {
+        svg.setAttribute("width", "900");
+        svg.setAttribute("height", "210");
+        svg.innerHTML = `<text x="12" y="24" fill="#98a2bd" font-size="13">无流水线轨迹（请运行后查看）</text>`;
+        note.textContent = "";
+        return;
+      }
+
+      const marginLeft = 56;
+      const marginTop = 18;
+      const rowH = 34;
+      const stepX = 10;
+      const width = marginLeft + Math.max(1, trace.length - 1) * stepX + 40;
+      const height = marginTop + stages.length * rowH + 20;
+      svg.setAttribute("width", String(width));
+      svg.setAttribute("height", String(height));
+
+      let html = "";
+      stages.forEach((s, i) => {
+        const y = marginTop + i * rowH;
+        html += `<line x1="${marginLeft}" y1="${y}" x2="${width - 20}" y2="${y}" stroke="#25304a" stroke-width="1" />`;
+        html += `<text x="10" y="${y + 4}" fill="#98a2bd" font-size="12">${s}</text>`;
+      });
+
+      stages.forEach((s, i) => {
+        const y = marginTop + i * rowH;
+        let path = "";
+        let prevActive = false;
+        trace.forEach((item, idx) => {
+          const v = item[s];
+          const active = v && v !== "-";
+          const x = marginLeft + idx * stepX;
+          if (!active) {
+            prevActive = false;
+            return;
+          }
+          path += prevActive ? ` L ${x} ${y}` : ` M ${x} ${y}`;
+          prevActive = true;
+        });
+        if (path) {
+          html += `<path d="${path}" fill="none" stroke="${colors[s]}" stroke-width="2.2" stroke-linecap="round" />`;
+        }
+      });
+
+      svg.innerHTML = html;
+      const shown = trace.length;
+      const total = traceCount || shown;
+      note.textContent = truncated ? `轨迹已截断：展示 ${shown} / ${total} cycles（可调低 max_cycles 或提高 trace_limit）。` : `展示 ${shown} cycles 的流水线轨迹。`;
+    }
+
+    async function checkHealth() {
+      setStatus("检查中...");
+      try {
+        const base = els.apiBase.value.replace(/\/+$/, "");
+        const resp = await fetch(base + "/health");
+        const data = await resp.json();
+        if (resp.ok && data.ok) {
+          setStatus("服务健康: " + (data.sim || "ok"), true);
+        } else {
+          setStatus("健康检查失败", false);
+        }
+      } catch (e) {
+        setStatus("健康检查错误: " + e.message, false);
+      }
+    }
+
+    async function runProgram() {
+      setStatus("编译运行中...");
+      els.runBtn.disabled = true;
+      try {
+        const base = els.apiBase.value.replace(/\/+$/, "");
+        const payload = {
+          lang: els.lang.value,
+          source_text: els.sourceText.value,
+          max_cycles: Number(els.maxCycles.value || 2000000),
+          march: els.march.value || "rv32i",
+          mabi: els.mabi.value || "ilp32",
+          use_custom_popcnt: !!els.popcntToggle.checked,
+          trace_limit: Math.min(Number(els.maxCycles.value || 2000000), 2000),
+        };
+        const resp = await fetch(base + "/run", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await resp.json();
+        els.rawJson.textContent = JSON.stringify(data, null, 2);
+        els.disassembly.textContent = data.disassembly || "无反汇编";
+        renderPipeline(data.pipeline_trace || [], !!data.pipeline_trace_truncated, Number(data.pipeline_trace_count || 0));
+        const metrics = data.metrics || {};
+        renderMetrics(metrics);
+        renderMetricGroup(els.exceptionGrid, metrics, [
+          "trap_count",
+          "interrupt_count",
+          "mcause",
+          "mepc",
+          "mtval",
+          "mstatus",
+          "mie",
+          "mip"
+        ]);
+        renderMetricGroup(els.memoryGrid, metrics, [
+          "cache_hits",
+          "cache_misses",
+          "cache_hit_rate",
+          "cache_write_backs"
+        ]);
+        if (resp.ok && data.ok) {
+          const summary = summarizeRun(data, payload.max_cycles);
+          const mode = data.popcnt_mode ? ` [POPCNT:${data.popcnt_mode}]` : "";
+          setStatus(summary.text + mode, summary.ok);
+        } else {
+          setStatus("运行失败: " + formatRunError(data), false);
+        }
+      } catch (e) {
+        setStatus("请求失败: " + e.message, false);
+      } finally {
+        els.runBtn.disabled = false;
+      }
+    }
+
+    els.checkBtn.addEventListener("click", checkHealth);
+    els.runBtn.addEventListener("click", runProgram);
+  </script>
+</body>
+</html>

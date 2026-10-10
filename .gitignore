@@ -1,0 +1,43 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+.vs/
+*.swp
+*.swo
+
+# Dependency directories
+web/node_modules/
+web/vendor/
+web/composer.phar
+
+# Local environment and secrets
+web/app/.config.php
+judger/judge_client/1/.conf.json
+web/test.php
+web/public/test.php
+
+# Runtime data
+web/app/storage/
+judger/judge_client/1/log/
+
+# VCS metadata from imported components
+.svn/
+
+# Build artifacts
+*.exe
+*.o
+*.obj
+*.log
+judger/judge_client/1/judge_client
+judger/judge_client/1/uoj_judger/main_judger
+judger/judge_client/1/uoj_judger/builtin/checker/*
+!judger/judge_client/1/uoj_judger/builtin/checker/*.cpp
+judger/judge_client/1/uoj_judger/builtin/judger/judger
+judger/judge_client/1/uoj_judger/run/compile
+judger/judge_client/1/uoj_judger/run/formatter
+judger/judge_client/1/uoj_judger/run/run_interaction
+judger/judge_client/1/uoj_judger/run/run_program
+judger/judge_client/1/uoj_judger/tests/test

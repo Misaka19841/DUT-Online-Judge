@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- 由 Microsoft Visio, SVG Export 生成 bomb_cat.svg Page-1 -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+		width="11.6929in" height="8.26772in" viewBox="0 0 841.89 595.276" xml:space="preserve" color-interpolation-filters="sRGB"
+		class="st11">
+	<style type="text/css">
+	<![CDATA[
+		.st1 {fill:#3c63ac;stroke:#31528f;stroke-width:0.75}
+		.st2 {fill:#feffff;font-family:雅痞-简;font-size:0.666664em}
+		.st3 {marker-end:url(#mrkr4-9);stroke:#4672c4;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
+		.st4 {fill:#4672c4;fill-opacity:1;stroke:#4672c4;stroke-opacity:1;stroke-width:0.28409090909091}
+		.st5 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
+		.st6 {fill:#3c63ac;font-family:微软雅黑;font-size:0.666664em}
+		.st7 {fill:url(#grad0-15);stroke:#3d64ac;stroke-width:0.75}
+		.st8 {fill:#3d64ac;font-family:雅痞-简;font-size:0.666664em}
+		.st9 {font-size:1em}
+		.st10 {fill:#4672c4;stroke:#c8c8c8;stroke-width:0.25}
+		.st11 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<defs id="Patterns_And_Gradients">
+		<linearGradient id="grad0-15" x1="0" y1="0" x2="1" y2="0" gradientTransform="rotate(60 0.5 0.5)">
+			<stop offset="0" stop-color="#e8ebf4" stop-opacity="1"/>
+			<stop offset="0.24" stop-color="#f4f5f9" stop-opacity="1"/>
+			<stop offset="0.54" stop-color="#feffff" stop-opacity="1"/>
+		</linearGradient>
+	</defs>
+	<defs id="Markers">
+		<g id="lend4">
+			<path d="M 2 1 L 0 0 L 2 -1 L 2 1 " style="stroke:none"/>
+		</g>
+		<marker id="mrkr4-9" class="st4" refX="-7.04" orient="auto" markerUnits="strokeWidth" overflow="visible">
+			<use xlink:href="#lend4" transform="scale(-3.52,-3.52) "/>
+		</marker>
+	</defs>
+	<g>
+		<title>页-1</title>
+		<g id="shape1-1" transform="translate(148.689,-524.409)">
+			<title>判定</title>
+			<desc>已知顶部卡牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st1"/>
+			<text x="11.43" y="576.42" class="st2">已知顶部卡牌</text>		</g>
+		<g id="shape3-4" transform="translate(219.555,-538.583)">
+			<title>动态连接线</title>
+			<desc>是</desc>
+			<path d="M0 588.19 L35.48 588.19" class="st3"/>
+			<rect x="17.2598" y="583.389" width="7.99997" height="9.59985" class="st5"/>
+			<text x="17.26" y="590.59" class="st6">是</text>		</g>
+		<g id="shape2-12" transform="translate(262.075,-524.409)">
+			<title>判定.2</title>
+			<desc>顶部卡牌 为炸弹牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="19.43" y="571.62" class="st8">顶部卡牌 <tspan x="19.43" dy="1.2em" class="st9">为炸弹牌</tspan></text>		</g>
+		<g id="shape9-18" transform="translate(332.941,-538.583)">
+			<title>动态连接线.9</title>
+			<desc>否</desc>
+			<path d="M0 588.19 L35.48 588.19" class="st3"/>
+			<rect x="17.2598" y="583.389" width="7.99997" height="9.59985" class="st5"/>
+			<text x="17.26" y="590.59" class="st6">否</text>		</g>
+		<g id="shape8-25" transform="translate(375.46,-524.409)">
+			<title>流程</title>
+			<desc>摸牌并完成回合</desc>
+			<rect x="0" y="552.756" width="70.8661" height="42.5197" class="st10"/>
+			<text x="7.43" y="576.42" class="st2">摸牌并完成回合</text>		</g>
+		<g id="shape11-28" transform="translate(177.035,-524.409)">
+			<title>动态连接线.11</title>
+			<desc>否</desc>
+			<path d="M7.09 595.28 L7.09 772.49" class="st3"/>
+			<rect x="3.08655" y="682.602" width="7.99997" height="9.59985" class="st5"/>
+			<text x="3.09" y="689.8" class="st6">否</text>		</g>
+		<g id="shape10-35" transform="translate(148.689,-297.638)">
+			<title>判定.10</title>
+			<desc>已知底部卡牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="11.43" y="576.42" class="st8">已知底部卡牌</text>		</g>
+		<g id="shape13-39" transform="translate(219.555,-311.811)">
+			<title>动态连接线.13</title>
+			<desc>是</desc>
+			<path d="M0 588.19 L74.95 588.19 A3 3 0 0 1 80.95 588.19 L148.87 588.19" class="st3"/>
+			<rect x="17.3899" y="584.098" width="7.99997" height="9.59985" class="st5"/>
+			<text x="17.39" y="591.3" class="st6">是</text>		</g>
+		<g id="shape12-46" transform="translate(375.46,-297.638)">
+			<title>判定.12</title>
+			<desc>底部卡牌 为炸弹牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="19.43" y="571.62" class="st8">底部卡牌 <tspan x="19.43" dy="1.2em" class="st9">为炸弹牌</tspan></text>		</g>
+		<g id="shape17-51" transform="translate(446.327,-311.811)">
+			<title>动态连接线.17</title>
+			<desc>否</desc>
+			<path d="M0 588.19 L35.48 588.19" class="st3"/>
+			<rect x="17.2598" y="583.389" width="7.99997" height="9.59985" class="st5"/>
+			<text x="17.26" y="590.59" class="st6">否</text>		</g>
+		<g id="shape16-58" transform="translate(488.846,-297.638)">
+			<title>判定.16</title>
+			<desc>玩家拥有 “抽底”牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="19.43" y="571.62" class="st8">玩家拥有 <tspan x="15.43" dy="1.2em" class="st9">“</tspan>抽底”牌</text>		</g>
+		<g id="shape19-63" transform="translate(559.712,-318.898)">
+			<title>动态连接线.19</title>
+			<desc>是</desc>
+			<path d="M0 595.28 L27.06 595.28 L27.06 549.78 L35.48 549.78" class="st3"/>
+			<rect x="7.62197" y="590.476" width="7.99997" height="9.59985" class="st5"/>
+			<text x="7.62" y="597.68" class="st6">是</text>		</g>
+		<g id="shape18-70" transform="translate(602.232,-343.129)">
+			<title>流程.18</title>
+			<desc>抽底牌并完成回合</desc>
+			<rect x="0" y="552.756" width="70.8661" height="42.5197" class="st10"/>
+			<text x="3.43" y="576.42" class="st2">抽底牌并完成回合</text>		</g>
+		<g id="shape22-73" transform="translate(184.122,-297.638)">
+			<title>动态连接线.22</title>
+			<desc>否</desc>
+			<path d="M0 595.28 L0 620.97 L177.17 620.97 L177.17 630.76" class="st3"/>
+			<rect x="-4.00006" y="601.248" width="7.99997" height="9.59985" class="st5"/>
+			<text x="-4" y="608.45" class="st6">否</text>		</g>
+		<g id="shape21-80" transform="translate(325.854,-212.598)">
+			<title>判定.21</title>
+			<desc>玩家拥有 “透视”牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="19.43" y="571.62" class="st8">玩家拥有 <tspan x="15.43" dy="1.2em" class="st9">“</tspan>透视”牌</text>		</g>
+		<g id="shape25-85" transform="translate(290.421,-524.409)">
+			<title>动态连接线.25</title>
+			<desc>是</desc>
+			<path d="M7.09 595.28 L7.09 680.36" class="st3"/>
+			<rect x="3.08655" y="636.539" width="7.99997" height="9.59985" class="st5"/>
+			<text x="3.09" y="643.74" class="st6">是</text>		</g>
+		<g id="shape24-92" transform="translate(262.075,-389.764)">
+			<title>判定.24</title>
+			<desc>已知底部卡牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="11.43" y="576.42" class="st8">已知底部卡牌</text>		</g>
+		<g id="shape27-96" transform="translate(332.941,-403.937)">
+			<title>动态连接线.27</title>
+			<desc>是</desc>
+			<path d="M0 588.19 L35.48 588.19" class="st3"/>
+			<rect x="17.2598" y="583.389" width="7.99997" height="9.59985" class="st5"/>
+			<text x="17.26" y="590.59" class="st6">是</text>		</g>
+		<g id="shape26-103" transform="translate(375.46,-389.764)">
+			<title>判定.26</title>
+			<desc>底部卡牌 为炸弹牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="19.43" y="571.62" class="st8">底部卡牌 <tspan x="19.43" dy="1.2em" class="st9">为炸弹牌</tspan></text>		</g>
+		<g id="shape30-108" transform="translate(446.327,-403.937)">
+			<title>动态连接线.30</title>
+			<desc>否</desc>
+			<path d="M0 588.19 L35.48 588.19" class="st3"/>
+			<rect x="17.2598" y="583.389" width="7.99997" height="9.59985" class="st5"/>
+			<text x="17.26" y="590.59" class="st6">否</text>		</g>
+		<g id="shape29-115" transform="translate(488.846,-389.764)">
+			<title>判定.29</title>
+			<desc>玩家拥有 “抽底”牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="19.43" y="571.62" class="st8">玩家拥有 <tspan x="15.43" dy="1.2em" class="st9">“</tspan>抽底”牌</text>		</g>
+		<g id="shape34-120" transform="translate(559.712,-411.024)">
+			<title>动态连接线.34</title>
+			<desc>是</desc>
+			<path d="M0 595.28 L27.06 595.28 L27.06 641.91 L35.48 641.91" class="st3"/>
+			<rect x="6.77159" y="590.476" width="7.99997" height="9.59985" class="st5"/>
+			<text x="6.77" y="597.68" class="st6">是</text>		</g>
+		<g id="shape40-127" transform="translate(297.508,-389.764)">
+			<title>动态连接线.40</title>
+			<desc>否</desc>
+			<path d="M0 595.28 L0 713.1 L63.78 713.1 L63.78 722.88" class="st3"/>
+			<rect x="-3.86992" y="609.61" width="7.99997" height="9.59985" class="st5"/>
+			<text x="-3.87" y="616.81" class="st6">否</text>		</g>
+		<g id="shape41-134" transform="translate(410.894,-297.638)">
+			<title>动态连接线.41</title>
+			<desc>是</desc>
+			<path d="M0 595.28 L0 620.97 L-49.61 620.97 L-49.61 630.76" class="st3"/>
+			<rect x="-4.00007" y="601.531" width="7.99997" height="9.59985" class="st5"/>
+			<text x="-4" y="608.73" class="st6">是</text>		</g>
+		<g id="shape42-141" transform="translate(524.279,-297.638)">
+			<title>动态连接线.42</title>
+			<desc>否</desc>
+			<path d="M0 595.28 L0 620.97 L-162.99 620.97 L-162.99 630.76" class="st3"/>
+			<rect x="-4.00007" y="601.814" width="7.99997" height="9.59985" class="st5"/>
+			<text x="-4" y="609.01" class="st6">否</text>		</g>
+		<g id="shape44-148" transform="translate(410.893,-432.283)">
+			<title>动态连接线.44</title>
+			<desc>是</desc>
+			<path d="M0 595.28 L0 520.87 L184.56 520.87" class="st3"/>
+			<rect x="-4.00006" y="570.141" width="7.99997" height="9.59985" class="st5"/>
+			<text x="-4" y="577.34" class="st6">是</text>		</g>
+		<g id="shape43-155" transform="translate(602.492,-485.433)">
+			<title>判定.43</title>
+			<desc>玩家拥有 “跳过”牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="19.43" y="571.62" class="st8">玩家拥有 <tspan x="15.43" dy="1.2em" class="st9">“</tspan>跳过”牌</text>		</g>
+		<g id="shape45-160" transform="translate(524.279,-432.283)">
+			<title>动态连接线.45</title>
+			<desc>否</desc>
+			<path d="M0 595.28 L0 520.87 L71.17 520.87" class="st3"/>
+			<rect x="-3.86991" y="569.925" width="7.99997" height="9.59985" class="st5"/>
+			<text x="-3.87" y="577.12" class="st6">否</text>		</g>
+		<g id="shape47-167" transform="translate(673.359,-499.606)">
+			<title>动态连接线.47</title>
+			<desc>是</desc>
+			<path d="M0 588.19 L35.48 588.19" class="st3"/>
+			<rect x="17.2598" y="583.389" width="7.99997" height="9.59985" class="st5"/>
+			<text x="17.26" y="590.59" class="st6">是</text>		</g>
+		<g id="shape46-174" transform="translate(715.878,-485.433)">
+			<title>流程.46</title>
+			<desc>使用“跳过”牌 跳过回合</desc>
+			<rect x="0" y="552.756" width="70.8661" height="42.5197" class="st10"/>
+			<text x="7.43" y="571.62" class="st2">使用“跳过”牌 <tspan x="19.43" dy="1.2em" class="st9">跳过回合</tspan></text>		</g>
+		<g id="shape50-178" transform="translate(602.492,-400.394)">
+			<title>流程.50</title>
+			<desc>玩家摸到炸弹并执行对炸弹牌的处理</desc>
+			<rect x="0" y="552.756" width="70.8661" height="42.5197" class="st10"/>
+			<text x="3.43" y="571.62" class="st2">玩家摸到炸弹并执<tspan x="3.43" dy="1.2em" class="st9">行对炸弹牌的处理</tspan></text>		</g>
+		<g id="shape60-182" transform="translate(325.854,-226.772)">
+			<title>动态连接线.60</title>
+			<desc>是</desc>
+			<path d="M0 588.19 L-191.26 588.19" class="st3"/>
+			<rect x="-103.148" y="583.389" width="7.99997" height="9.59985" class="st5"/>
+			<text x="-103.15" y="590.59" class="st6">是</text>		</g>
+		<g id="shape59-189" transform="translate(56.6929,-212.598)">
+			<title>流程.59</title>
+			<desc>使用“透视”牌</desc>
+			<rect x="0" y="552.756" width="70.8661" height="42.5197" class="st7"/>
+			<text x="7.43" y="576.42" class="st8">使用“透视”牌</text>		</g>
+		<g id="shape61-193" transform="translate(92.126,-255.118)">
+			<title>动态连接线.61</title>
+			<path d="M0 595.28 L0 304.72 L49.52 304.72" class="st3"/>
+		</g>
+		<g id="shape62-198" transform="translate(630.839,-485.433)">
+			<title>动态连接线.62</title>
+			<desc>否</desc>
+			<path d="M7.09 595.28 L7.09 630.76" class="st3"/>
+			<rect x="3.08655" y="611.736" width="7.99997" height="9.59985" class="st5"/>
+			<text x="3.09" y="618.94" class="st6">否</text>		</g>
+		<g id="shape64-205" transform="translate(396.72,-226.772)">
+			<title>动态连接线.64</title>
+			<desc>否</desc>
+			<path d="M0 588.19 L35.61 588.19" class="st3"/>
+			<rect x="17.3249" y="583.389" width="7.99997" height="9.59985" class="st5"/>
+			<text x="17.32" y="590.59" class="st6">否</text>		</g>
+		<g id="shape63-212" transform="translate(552.626,-212.598)">
+			<title>判定.63</title>
+			<desc>已知底部 是炸弹牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="19.43" y="571.62" class="st8">已知底部 <tspan x="19.43" dy="1.2em" class="st9">是炸弹牌</tspan></text>		</g>
+		<g id="shape66-217" transform="translate(580.972,-212.598)">
+			<title>动态连接线.66</title>
+			<desc>否</desc>
+			<path d="M7.09 595.28 L7.09 656.62" class="st3"/>
+			<rect x="3.08655" y="624.669" width="7.99997" height="9.59985" class="st5"/>
+			<text x="3.09" y="631.87" class="st6">否</text>		</g>
+		<g id="shape65-224" transform="translate(552.626,-101.693)">
+			<title>判定.65</title>
+			<desc>已知顶部 是炸弹牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="19.43" y="571.62" class="st8">已知顶部 <tspan x="19.43" dy="1.2em" class="st9">是炸弹牌</tspan></text>		</g>
+		<g id="shape67-229" transform="translate(439.37,-212.598)">
+			<title>判定.67</title>
+			<desc>玩家拥有 “跳过”牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="19.43" y="571.62" class="st8">玩家拥有 <tspan x="15.43" dy="1.2em" class="st9">“</tspan>跳过”牌</text>		</g>
+		<g id="shape71-234" transform="translate(467.717,-212.598)">
+			<title>动态连接线.71</title>
+			<desc>是</desc>
+			<path d="M7.09 595.28 L7.09 618.78" class="st3"/>
+			<rect x="3.08655" y="605.749" width="7.99997" height="9.59985" class="st5"/>
+			<text x="3.09" y="612.95" class="st6">是</text>		</g>
+		<g id="shape70-241" transform="translate(439.37,-139.532)">
+			<title>流程.70</title>
+			<desc>使用“跳过”牌 跳过回合</desc>
+			<rect x="0" y="552.756" width="70.8661" height="42.5197" class="st10"/>
+			<text x="7.43" y="571.62" class="st2">使用“跳过”牌 <tspan x="19.43" dy="1.2em" class="st9">跳过回合</tspan></text>		</g>
+		<g id="shape73-245" transform="translate(680.315,-126.85)">
+			<title>流程.73</title>
+			<desc>摸牌并完成回合 若摸到炸弹则执行对炸弹牌的处理</desc>
+			<rect x="0" y="552.756" width="70.8661" height="42.5197" class="st10"/>
+			<text x="7.43" y="566.82" class="st2">摸牌并完成回合 <tspan x="3.43" dy="1.2em" class="st9">若摸到炸弹则执行</tspan><tspan x="7.43"
+						dy="1.2em" class="st9">对炸弹牌的处理</tspan></text>		</g>
+		<g id="shape76-250" transform="translate(581.037,-101.693)">
+			<title>动态连接线.76</title>
+			<desc>否</desc>
+			<path d="M7.02 595.28 L7.02 616.54 L7.15 616.54 L7.15 619.77" class="st3"/>
+			<rect x="3.02148" y="606.309" width="7.99997" height="9.59985" class="st5"/>
+			<text x="3.02" y="613.51" class="st6">否</text>		</g>
+		<g id="shape79-257" transform="translate(552.626,-115.866)">
+			<title>动态连接线.79</title>
+			<desc>是</desc>
+			<path d="M0 588.19 L-148.74 588.19" class="st3"/>
+			<rect x="-81.8877" y="583.389" width="7.99997" height="9.59985" class="st5"/>
+			<text x="-81.89" y="590.59" class="st6">是</text>		</g>
+		<g id="shape84-264" transform="translate(325.984,-101.693)">
+			<title>判定.84</title>
+			<desc>玩家拥有 “抽底”牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="19.43" y="571.62" class="st8">玩家拥有 <tspan x="15.43" dy="1.2em" class="st9">“</tspan>抽底”牌</text>		</g>
+		<g id="shape88-269" transform="translate(325.984,-115.866)">
+			<title>动态连接线.88</title>
+			<desc>是</desc>
+			<path d="M0 588.19 L-35.48 588.19" class="st3"/>
+			<rect x="-25.2599" y="583.389" width="7.99997" height="9.59985" class="st5"/>
+			<text x="-25.26" y="590.59" class="st6">是</text>		</g>
+		<g id="shape87-276" transform="translate(212.598,-101.693)">
+			<title>流程.87</title>
+			<desc>抽底牌并完成回合 若摸到炸弹则执行对炸弹牌的处理</desc>
+			<rect x="0" y="552.756" width="70.8661" height="42.5197" class="st10"/>
+			<text x="3.43" y="566.82" class="st2">抽底牌并完成回合 <tspan x="3.43" dy="1.2em" class="st9">若摸到炸弹则执行</tspan><tspan x="7.43"
+						dy="1.2em" class="st9">对炸弹牌的处理</tspan></text>		</g>
+		<g id="shape92-281" transform="translate(354.331,-101.693)">
+			<title>动态连接线.92</title>
+			<desc>否</desc>
+			<path d="M7.09 595.28 L7.09 619.77" class="st3"/>
+			<rect x="3.08655" y="606.244" width="7.99997" height="9.59985" class="st5"/>
+			<text x="3.09" y="613.44" class="st6">否</text>		</g>
+		<g id="shape91-288" transform="translate(325.984,-27.6378)">
+			<title>流程.91</title>
+			<desc>玩家摸到炸弹并执行对炸弹牌的处理</desc>
+			<rect x="0" y="552.756" width="70.8661" height="42.5197" class="st10"/>
+			<text x="3.43" y="571.62" class="st2">玩家摸到炸弹并执<tspan x="3.43" dy="1.2em" class="st9">行对炸弹牌的处理</tspan></text>		</g>
+		<g id="shape94-292" transform="translate(552.756,-27.6378)">
+			<title>判定.94</title>
+			<desc>玩家拥有 “抽底”牌</desc>
+			<path d="M0 574.02 L35.43 552.76 L70.87 574.02 L35.43 595.28 L0 574.02 Z" class="st7"/>
+			<text x="19.43" y="571.62" class="st8">玩家拥有 <tspan x="15.43" dy="1.2em" class="st9">“</tspan>抽底”牌</text>		</g>
+		<g id="shape104-297" transform="translate(552.756,-41.811)">
+			<title>动态连接线.104</title>
+			<desc>是</desc>
+			<path d="M0 588.19 L-35.48 588.19" class="st3"/>
+			<rect x="-25.2599" y="583.389" width="7.99997" height="9.59985" class="st5"/>
+			<text x="-25.26" y="590.59" class="st6">是</text>		</g>
+		<g id="shape103-304" transform="translate(439.37,-27.6378)">
+			<title>流程.103</title>
+			<desc>抽底牌并完成回合 若摸到炸弹则执行对炸弹牌的处理</desc>
+			<rect x="0" y="552.756" width="70.8661" height="42.5197" class="st10"/>
+			<text x="3.43" y="566.82" class="st2">抽底牌并完成回合 <tspan x="3.43" dy="1.2em" class="st9">若摸到炸弹则执行</tspan><tspan x="7.43"
+						dy="1.2em" class="st9">对炸弹牌的处理</tspan></text>		</g>
+		<g id="shape106-309" transform="translate(623.622,-48.8976)">
+			<title>动态连接线.106</title>
+			<desc>否</desc>
+			<path d="M0 595.28 L38.55 595.28 L38.55 496.06 L49.65 496.06" class="st3"/>
+			<rect x="15.2755" y="590.476" width="7.99997" height="9.59985" class="st5"/>
+			<text x="15.28" y="597.68" class="st6">否</text>		</g>
+		<g id="shape108-316" transform="translate(510.236,-226.772)">
+			<title>动态连接线.108</title>
+			<desc>否</desc>
+			<path d="M0 588.19 L35.35 588.19" class="st3"/>
+			<rect x="17.1947" y="583.389" width="7.99997" height="9.59985" class="st5"/>
+			<text x="17.19" y="590.59" class="st6">否</text>		</g>
+		<g id="shape109-323" transform="translate(623.492,-233.858)">
+			<title>动态连接线.109</title>
+			<desc>是</desc>
+			<path d="M0 595.28 L38.62 595.28 L38.62 681.02 L49.78 681.02" class="st3"/>
+			<rect x="15.4057" y="590.618" width="7.99997" height="9.59985" class="st5"/>
+			<text x="15.41" y="597.82" class="st6">是</text>		</g>
+	</g>
+</svg>
