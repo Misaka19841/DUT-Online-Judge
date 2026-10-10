@@ -36,12 +36,7 @@ if ($username !== '') {
 
 // 标签筛选
 if ($tag !== '') {
-    $conditions[] = [
-        DB::rawvalue($tag), "in", DB::rawbracket([
-            "select tag from blogs_tags",
-            "where", ["blogs_tags.blog_id" => DB::raw("blogs.id")]
-        ])
-    ];
+    $conditions[] = UOJBlog::getTagSearchCondition($tag);
 }
 
 // 分页查询博客
@@ -68,6 +63,7 @@ $blogs_pag = new Paginator([
                     <div class="form-group">
                         <label>标签</label>
                         <input type="text" name="tag" class="form-control" value="<?= HTML::escape($tag) ?>">
+                        <div class="help-block">支持区段标签搜索，如 <code>sol=8~19</code></div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">搜索</button>
                 </form>

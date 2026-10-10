@@ -11,12 +11,7 @@
 	
 	if (isset($_GET['tag'])) {
 		$blog_tag_required = $_GET['tag'];
-		$display_blogs_conds[] = [
-            DB::rawvalue($blog_tag_required), "in", DB::rawbracket([
-                "select tag from blogs_tags",
-                "where", ["blogs_tags.blog_id" => DB::raw("blogs.id")]
-            ])
-        ];
+                $display_blogs_conds[] = UOJBlog::getTagSearchCondition($blog_tag_required);
 	} else {
 		$blog_tag_required = null;
 	}

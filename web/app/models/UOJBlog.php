@@ -4,6 +4,46 @@ class UOJBlog {
     use UOJDataTrait;
 	use UOJArticleTrait;
 
+    public static function parseSolutionTagRange($tag) {
+        if (!preg_match('/^sol=(\d+)(?:~(\d+))?$/', $tag, $matches)) {
+            return null;
+        }
+
+        $l = (int)$matches[1];
+        $r = isset($matches[2]) ? (int)$matches[2] : $l;
+        if ($l > $r) {
+            [$l, $r] = [$r, $l];
+        }
+
+        return [$l, $r];
+    }
+
+    public static function getTagSearchCondition($tag, $blog_id_expr = 'blogs.id') {
+        $solution_range = self::parseSolutionTagRange($tag);
+        if ($solution_range === null) {
+            return [
+                DB::rawvalue($tag), "in", DB::rawbracket([
+                    "select tag from blogs_tags",
+                    "where", ["blogs_tags.blog_id" => DB::raw($blog_id_expr)]
+                ])
+            ];
+        }
+
+        [$l, $r] = $solution_range;
+        $range_cond = "blogs_tags.tag regexp '^sol=[0-9]+(~[0-9]+)?$'"
+            . " and cast(substring_index(substring(blogs_tags.tag, 5), '~', 1) as unsigned) <= {$r}"
+            . " and cast(if(instr(blogs_tags.tag, '~') > 0, substring_index(blogs_tags.tag, '~', -1), substring(blogs_tags.tag, 5)) as unsigned) >= {$l}";
+
+        return DB::exists([
+            "select 1 from blogs_tags",
+            "where", [
+                "blogs_tags.blog_id" => DB::raw($blog_id_expr),
+                $range_cond
+            ],
+            DB::limit(1)
+        ]);
+    }
+
     public static function query($id) {
         if (!isset($id) || !validateUInt($id)) {
             return null;
