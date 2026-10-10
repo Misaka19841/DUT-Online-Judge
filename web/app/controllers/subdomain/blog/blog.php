@@ -238,7 +238,7 @@ if ($safeModeEnabled) {
         #blog-toc {
                 position: fixed;
                 top: 160px;
-                left: calc((100vw - 1170px) / 2 - 220px);
+                left: 0;
                 width: 52px;
                 max-height: calc(100vh - 180px);
                 overflow: hidden;
