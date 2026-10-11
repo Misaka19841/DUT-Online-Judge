@@ -142,13 +142,16 @@ $perm = UOJUser::viewerCanSeeComponents($user, Auth::user());
         </div>
         <?php $pm_blocked = contest_security_mode_should_block_feature('private_message', Auth::user()); ?>
         <?php $blog_blocked = contest_security_mode_should_block_feature('blog', Auth::user()); ?>
+        <?php $profile_edit_blocked = contest_security_mode_should_block_feature('profile_edit', Auth::user()); ?>
         <?php if (Auth::check()): ?>
         <?php if (Auth::id() != $user['username']): ?>
         <?php if (!$pm_blocked): ?>
         <a type="button" class="btn btn-info btn-sm" href="<?= HTML::url("/user/msg?enter={$user['username']}") ?>"><span class="glyphicon glyphicon-envelope"></span> <?= UOJLocale::get('send private message') ?></a>
         <?php endif ?>
         <?php else: ?>
+        <?php if (!$profile_edit_blocked): ?>
         <a type="button" class="btn btn-info btn-sm" href="<?= HTML::url("/user/modify-profile") ?>"><span class="glyphicon glyphicon-pencil"></span> <?= UOJLocale::get('modify my profile') ?></a>
+        <?php endif ?>
         <?php endif ?>
         <?php endif ?>
         

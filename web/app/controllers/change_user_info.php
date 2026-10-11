@@ -2,6 +2,7 @@
 	if (!Auth::check()) {
 		redirectToLogin();
 	}
+        contest_security_mode_block_if_needed('profile_edit', Auth::user());
 	function handlePost() {
         $invalidFormErr = '无效表单';
 
@@ -199,4 +200,3 @@
 	});
 </script>
 <?php echoUOJPageFooter() ?>
-

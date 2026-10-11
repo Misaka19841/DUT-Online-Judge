@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/market_common.php';
 
-market_require_login();
+market_require_login('date');
 
 function date_is_admin() {
     return Auth::id() === 'admin';
@@ -1705,4 +1705,3 @@ if (!is_array($tech_pref)) $tech_pref = [];
 <?php endif ?>
 
 <?php echoUOJPageFooter() ?>
-

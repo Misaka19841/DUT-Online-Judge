@@ -1,10 +1,24 @@
 <?php
-contest_security_mode_block_if_needed('submission', Auth::user());
 requirePHPLib('judger');
 
 UOJSubmission::init(UOJRequest::get('id')) || UOJResponse::page404();
 UOJSubmission::initProblemAndContest() || UOJResponse::page404();
 UOJSubmission::cur()->userCanView(Auth::user(), ['ensure' => true]);
+
+$allow_current_contest_submission = UOJSubmission::cur()->problem instanceof UOJContestProblem
+        && UOJSubmission::cur()->problem->contest->progress() == CONTEST_IN_PROGRESS
+        && Auth::check()
+        && UOJSubmission::info('submitter') === Auth::id();
+
+if (
+        contest_security_mode_should_block_feature('submission', Auth::user())
+        && !$allow_current_contest_submission
+) {
+        UOJResponse::message(
+                contest_security_mode_block_message('submission'),
+                '比赛隔离模式已开启'
+        );
+}
 
 $perm = UOJSubmission::cur()->viewerCanSeeComponents(Auth::user());
 

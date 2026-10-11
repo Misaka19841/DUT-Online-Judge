@@ -4,10 +4,11 @@ function market_is_admin() {
     return isSuperUser(Auth::user());
 }
 
-function market_require_login() {
+function market_require_login($feature = 'market') {
     if (!Auth::check()) {
         redirectToLogin();
     }
+    contest_security_mode_block_if_needed($feature, Auth::user());
 }
 
 function market_parse_price($str, &$price) {
@@ -58,4 +59,3 @@ function market_require_schema_or_hint() {
     echo '</div>';
     return false;
 }
-
