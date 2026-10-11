@@ -39,7 +39,7 @@
 		$esc_name = $_POST['name'];
 		$esc_name = $purifier->purify($esc_name);
 		
-		DB::update([
+				$ret = DB::update([
             "update contests",
             "set", [
                 "start_time" => $start_time_str,
@@ -47,6 +47,13 @@
                 "name" => $esc_name
             ], "where", ["id" => $contest['id']]
         ]);
+				if ($ret === false) {
+						$msg = '保存失败，比赛标题可能过长或包含数据库不接受的内容。';
+						if (DB::$conn->error !== '') {
+								$msg .= '<br />数据库返回：' . HTML::escape(DB::$conn->error);
+						}
+						UOJResponse::message($msg);
+				}
 	};
 	
 	$managers_form = new UOJAddDelCmdForm(

@@ -36,11 +36,18 @@
 		$esc_name = $_POST['name'];
 		$esc_name = $purifier->purify($esc_name);
         
-        DB::insert([
+		$ret = DB::insert([
             "insert into contests",
             "(name, start_time, last_min, status)", "values",
             DB::tuple([$esc_name, $start_time_str, $_POST['last_min'], 'unfinished'])
         ]);
+		if ($ret === false) {
+				$msg = '创建失败，比赛标题可能过长或包含数据库不接受的内容。';
+				if (DB::$conn->error !== '') {
+						$msg .= '<br />数据库返回：' . HTML::escape(DB::$conn->error);
+				}
+				UOJResponse::message($msg);
+		}
 	};
 	$time_form->succ_href="/contests";
 	$time_form->runAtServer();
