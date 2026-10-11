@@ -1,4 +1,5 @@
 <?php
+$hack_blocked = contest_security_mode_should_block_feature('hack', Auth::user());
 if (!function_exists('deepseekCreateAppDbConnection')) {
     function deepseekCreateAppDbConnection() {
         $db_cfg = UOJConfig::$data['database'];
@@ -51,7 +52,9 @@ $deepseekSelectedSkill = isset($_GET['skill']) ? trim($_GET['skill']) : '';
 		<li><a href="<?= HTML::url('/contests') ?>"><?= UOJLocale::get('contests') ?></a></li>
                 <li><a href="<?= HTML::url('/problems') ?>"><?= UOJLocale::get('problems') ?></a></li>
                 <li><a href="<?= HTML::url('/submissions') ?>"><?= UOJLocale::get('submissions') ?></a></li>
+                <?php if (!$hack_blocked): ?>
                 <li><a href="<?= HTML::url('/hacks') ?>"><?= UOJLocale::get('hacks') ?></a></li>
+                <?php endif ?>
                 <li><a href="<?= HTML::url('/blogs') ?>"><?= UOJLocale::get('blogs') ?></a></li>
 		<li><a href="<?= HTML::url('/faq') ?>"><?= UOJLocale::get('help') ?></a></li>
 		<li><a href="/hall-of-fame">名人堂</a></li>

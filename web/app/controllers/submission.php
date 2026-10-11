@@ -9,6 +9,7 @@ $allow_current_contest_submission = UOJSubmission::cur()->problem instanceof UOJ
         && UOJSubmission::cur()->problem->contest->progress() == CONTEST_IN_PROGRESS
         && Auth::check()
         && UOJSubmission::info('submitter') === Auth::id();
+$hack_blocked = contest_security_mode_should_block_feature('hack', Auth::user());
 
 if (
         contest_security_mode_should_block_feature('submission', Auth::user())
@@ -59,7 +60,7 @@ if ($can_see_minor) {
 }
 
 if (UOJSubmission::cur()->isLatest()) {
-    if (UOJSubmission::cur()->preHackCheck()) {
+    if (!$hack_blocked && UOJSubmission::cur()->preHackCheck()) {
         $hack_form = new UOJForm('hack');
         
         $hack_form->addTextFileInput('input', '输入数据');

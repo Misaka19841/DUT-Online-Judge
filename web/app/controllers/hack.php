@@ -1,4 +1,5 @@
 <?php
+    contest_security_mode_block_if_needed('hack', Auth::user());
     requirePHPLib('judger');
     requirePHPLib('svn');
     

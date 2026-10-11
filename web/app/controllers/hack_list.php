@@ -1,4 +1,5 @@
 <?php
+        contest_security_mode_block_if_needed('hack', Auth::user());
 	$conds = array();
 
 	$q_problem_id = isset($_GET['problem_id']) && validateUInt($_GET['problem_id']) ? $_GET['problem_id'] : null;

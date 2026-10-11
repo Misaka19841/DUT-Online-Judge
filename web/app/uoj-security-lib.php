@@ -290,6 +290,7 @@ function contest_security_mode_feature_label($feature) {
                 'blog' => '博客功能',
                 'deepseek' => 'AI 问答',
                 'submission' => '提交记录',
+                'hack' => 'Hack 功能',
                 'market' => '二手交易功能',
                 'date' => '搭子匹配功能',
                 'profile_edit' => '个人资料修改功能'
