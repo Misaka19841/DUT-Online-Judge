@@ -1,6 +1,16 @@
 <?php
 
 class UOJProblemBatchManager {
+    private static function normalizeUIntLike($x): ?string {
+        if (is_int($x)) {
+            return (string)$x;
+        }
+        if (is_string($x)) {
+            return $x;
+        }
+        return null;
+    }
+
     public static function parseProblemIdList(string $raw): array {
         $raw = str_replace([',', "\r", "\n", "\t"], ' ', $raw);
         $tokens = preg_split('/\s+/', trim($raw));
@@ -19,7 +29,7 @@ class UOJProblemBatchManager {
                 }
                 for ($i = $l; $i <= $r; $i++) {
                     if (!isset($seen[$i])) {
-                        $ids[] = $i;
+                        $ids[] = (string)$i;
                         $seen[$i] = true;
                     }
                 }
@@ -30,7 +40,7 @@ class UOJProblemBatchManager {
             }
             $id = (int)$token;
             if (!isset($seen[$id])) {
-                $ids[] = $id;
+                $ids[] = (string)$id;
                 $seen[$id] = true;
             }
         }
@@ -231,12 +241,13 @@ class UOJProblemBatchManager {
         if (!isset($manifest['contest_id'])) {
             return null;
         }
-        if (!validateUInt($manifest['contest_id'])) {
+        $contest_id = self::normalizeUIntLike($manifest['contest_id']);
+        if ($contest_id === null || !validateUInt($contest_id)) {
             throw new Exception('manifest.json 中 contest_id 非法');
         }
-        $contest = UOJContest::query($manifest['contest_id']);
+        $contest = UOJContest::query($contest_id);
         if (!$contest) {
-            throw new Exception("不存在比赛 #{$manifest['contest_id']}");
+            throw new Exception("不存在比赛 #{$contest_id}");
         }
         return $contest;
     }
