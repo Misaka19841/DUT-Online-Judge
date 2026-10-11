@@ -7,6 +7,12 @@ class UOJContext {
 			'backend' => 'aux',
 			'timeout' => 30
 		],
+                'safemode' => [
+                        'enabled' => false,
+                        'version' => 0,
+                        'last_batch_id' => 0,
+                        'last_generated_at' => null
+                ],
 		'submission_frequency' => [
 			'interval' => 'PT1S',
 			'limit' => 1,

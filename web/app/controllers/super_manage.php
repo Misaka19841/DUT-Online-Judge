@@ -361,6 +361,47 @@ $submission_frequency_form->handle = function (&$vdata) {
 };
 $submission_frequency_form->runAtServer();
 
+$safemode_notice = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (isset($_POST['form_safemode'])) {
+                crsf_defend();
+                $enable = ($_POST['safemode'] ?? '0') === '1';
+                $cfg = contest_security_mode_config();
+                if ($enable) {
+                        if (!$cfg['enabled']) {
+                                contest_security_mode_generate_login_codes(300);
+                                $safemode_notice = '比赛隔离模式已开启，并生成了 300 个新验证码。';
+                        } else {
+                                contest_security_mode_set_config([
+                                        'enabled' => true,
+                                        'version' => $cfg['version'],
+                                        'last_batch_id' => $cfg['last_batch_id'],
+                                        'last_generated_at' => $cfg['last_generated_at']
+                                ]);
+                                $safemode_notice = '比赛隔离模式已保持开启。';
+                        }
+                } else {
+                        contest_security_mode_disable();
+                        $safemode_notice = '比赛隔离模式已关闭。';
+                }
+        } elseif (isset($_POST['form_safemode_regen'])) {
+                crsf_defend();
+                $count = isset($_POST['safemode_code_count']) && validateUInt($_POST['safemode_code_count'])
+                        ? (int)$_POST['safemode_code_count']
+                        : 300;
+                $count = max(1, min(1000, $count));
+                contest_security_mode_generate_login_codes($count);
+                $safemode_notice = "已重新生成 {$count} 个验证码，并使此前的验证码全部失效。";
+        }
+}
+
+$safemode_cfg = contest_security_mode_config();
+$safemode_stats = contest_security_mode_get_code_stats();
+$safemode_codes = contest_security_mode_get_codes(true);
+$safemode_code_lines = implode("\n", array_map(function($row) {
+        return contest_security_mode_display_login_code($row['code']);
+}, $safemode_codes));
+
 $cur_tab = isset($_GET['tab']) ? $_GET['tab'] : 'users';
 
 $tabs_info = [
@@ -638,58 +679,56 @@ requireLib('morris');
     <h4>提交频次限制</h4>
     <?php $submission_frequency_form->printHTML() ?>
     
-    <h4>安全模式开关</h4>
-    
-    <?php
-    // 处理表单提交
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_safemode'])) {
-        $value = isset($_POST['safemode']) ? $_POST['safemode'] : '0';
-        DB::update([
-            "insert into meta (name, value, updated_at)",
-            "values", DB::tuple(['safemode', $value, DB::now()]),
-            "on duplicate key update", [
-                "value" => $value,
-                "updated_at" => DB::now()
-            ]
-        ]);
-
-        // 刷新页面
-        echo '<script>location.href = location.pathname + "?" + new URLSearchParams(location.search).toString();</script>';
-    }
-    
-    // 读取当前值
-    $current_value = '0';
-    $row = DB::selectFirst([
-        "select value from meta",
-        "where", ["name" => "safemode"],
-        DB::limit(1)
-    ]);
-    if ($row) {
-        $current_value = $row['value'];
-    }
-    ?>
-    
-    <!-- 正确版本：按钮在另一行且居中 -->
+    <h4>比赛隔离模式</h4>
+    <?php if ($safemode_notice !== null): ?>
+        <div class="alert alert-info"><?= HTML::escape($safemode_notice) ?></div>
+    <?php endif ?>
+    <div class="alert alert-warning">
+        开启后，所有非管理员旧登录态会立即失效；非管理员重新登录时必须输入一次性验证码。重新生成验证码也会同步使旧验证码和旧验证登录态失效。
+    </div>
     <form method="post" class="form-horizontal">
         <input type="hidden" name="form_safemode" value="1">
+        <input type="hidden" name="_token" value="<?= crsf_token() ?>">
         
         <div class="form-group">
             <label for="input-safemode" class="col-sm-2 control-label">安全模式状态</label>
             <div class="col-sm-3">
                 <select name="safemode" id="input-safemode" class="form-control">
-                    <option value="0" <?= $current_value == '0' ? 'selected' : '' ?>>关闭</option>
-                    <option value="1" <?= $current_value == '1' ? 'selected' : '' ?>>开启</option>
+                    <option value="0" <?= !$safemode_cfg['enabled'] ? 'selected' : '' ?>>关闭</option>
+                    <option value="1" <?= $safemode_cfg['enabled'] ? 'selected' : '' ?>>开启</option>
                 </select>
             </div>
         </div>
         
-        <!-- 按钮在单独一行且居中 -->
         <div class="form-group">
             <div class="text-center" style="text-align: center;">
                 <button type="submit" name="submit-safemode" class="btn btn-default">提交</button>
             </div>
         </div>
     </form>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">一次性验证码</div>
+        <div class="panel-body">
+            <p>当前状态：<?= $safemode_cfg['enabled'] ? '<strong class="text-danger">已开启</strong>' : '<strong class="text-muted">已关闭</strong>' ?></p>
+            <p>当前验证版本：<?= (int)$safemode_cfg['version'] ?>，当前批次：<?= (int)$safemode_cfg['last_batch_id'] ?>，未使用：<?= (int)$safemode_stats['unused'] ?>，已使用：<?= (int)$safemode_stats['used'] ?></p>
+            <p>最近生成时间：<?= $safemode_cfg['last_generated_at'] ? HTML::escape($safemode_cfg['last_generated_at']) : '暂无' ?></p>
+
+            <form method="post" class="form-inline">
+                <input type="hidden" name="form_safemode_regen" value="1">
+                <input type="hidden" name="_token" value="<?= crsf_token() ?>">
+                <div class="form-group">
+                    <label for="input-safemode-code-count">生成数量</label>
+                    <input type="number" min="1" max="1000" class="form-control" id="input-safemode-code-count" name="safemode_code_count" value="300" />
+                </div>
+                <button type="submit" class="btn btn-warning">重新生成验证码</button>
+            </form>
+
+            <div class="top-buffer-sm"></div>
+            <p class="text-muted">下面是当前未使用验证码列表，可直接复制后打印成密码条发放。</p>
+            <textarea class="form-control" rows="16" readonly><?= HTML::escape($safemode_code_lines) ?></textarea>
+        </div>
+    </div>
     
 <?php endif ?>
 

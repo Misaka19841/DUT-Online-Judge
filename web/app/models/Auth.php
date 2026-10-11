@@ -27,6 +27,7 @@ class Auth {
 		if (!validateUsername($username)) {
 			return;
 		}
+                contest_security_mode_clear_session_verified();
 		$_SESSION['username'] = $username;
 		if ($remember) {
 			$remember_token = DB::selectSingle([
@@ -50,6 +51,7 @@ class Auth {
 	public static function logout() {
 		unset($_SESSION['username']);
 		unset($_SESSION['last_visited']);
+                contest_security_mode_clear_session_verified();
 		Cookie::safeUnset('uoj_username', '/');
 		Cookie::safeUnset('uoj_remember_token', '/');
 		DB::update([
@@ -99,6 +101,10 @@ class Auth {
 		if ($myUser && UOJUser::getAccountStatus($myUser) != 'ok') {
 			$myUser = null;
 		}
+                if ($myUser && !contest_security_mode_user_can_stay_logged_in($myUser)) {
+                        Auth::logout();
+                        $myUser = null;
+                }
 		if ($myUser) {
 			$myUser = UOJUser::updateVisitHistory($myUser, [
 				'remote_addr' => UOJContext::remoteAddr(),

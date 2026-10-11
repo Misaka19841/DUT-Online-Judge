@@ -1,5 +1,6 @@
 <?php
 // deepseek.php
+contest_security_mode_block_if_needed('deepseek', Auth::user());
 requireLib('mathjax');
 echoUOJPageHeader('DeepSeek问答');
 
@@ -23,20 +24,6 @@ if (!function_exists('deepseekFetchSkills')) {
     }
 }
 
-// 检查安全模式
-function checkSafeMode() {
-    try {
-        $row = DB::selectFirst([
-            "select value from meta",
-            "where", ["name" => "safemode"],
-            DB::limit(1)
-        ]);
-        return $row ? intval($row['value']) === 1 : false;
-    } catch (Exception $e) {
-        return true;
-    }
-}
-
 // 辅助函数：安全的HTML转义
 function safeHtmlEscape($text) {
     return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
@@ -57,17 +44,7 @@ foreach ($skills as $skillRow) {
     }
 }
 
-// 检查安全模式
-$safeModeEnabled = checkSafeMode();
-
-if ($safeModeEnabled) {
-    $result = [
-        'question' => $question,
-        'answer' => '管理员开启了比赛模式，AI问答已关闭',
-        'timestamp' => time(),
-        'source' => 'safemode'
-    ];
-} elseif ($question !== '') {
+if ($question !== '') {
     $effectiveQuestion = $question;
     if ($selectedSkillContent !== '') {
         $effectiveQuestion = $selectedSkillContent . "\n\n" . $question;

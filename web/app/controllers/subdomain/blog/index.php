@@ -1,4 +1,5 @@
 <?php
+        contest_security_mode_block_if_needed('blog', Auth::user());
 	$blogs_pag = new Paginator([
 		'col_names' => ['*'],
 		'table_name' => 'blogs',

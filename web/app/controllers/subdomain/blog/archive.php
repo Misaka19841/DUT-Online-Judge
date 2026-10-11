@@ -1,4 +1,5 @@
 <?php
+        contest_security_mode_block_if_needed('blog', Auth::user());
 	$blogs_conds = [
         "poster" => UOJUserBlog::id(),
         "is_draft" => false

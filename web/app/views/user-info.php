@@ -140,15 +140,21 @@ $perm = UOJUser::viewerCanSeeComponents($user, Auth::user());
                 </div>
             </div>
         </div>
+        <?php $pm_blocked = contest_security_mode_should_block_feature('private_message', Auth::user()); ?>
+        <?php $blog_blocked = contest_security_mode_should_block_feature('blog', Auth::user()); ?>
         <?php if (Auth::check()): ?>
         <?php if (Auth::id() != $user['username']): ?>
+        <?php if (!$pm_blocked): ?>
         <a type="button" class="btn btn-info btn-sm" href="<?= HTML::url("/user/msg?enter={$user['username']}") ?>"><span class="glyphicon glyphicon-envelope"></span> <?= UOJLocale::get('send private message') ?></a>
+        <?php endif ?>
         <?php else: ?>
         <a type="button" class="btn btn-info btn-sm" href="<?= HTML::url("/user/modify-profile") ?>"><span class="glyphicon glyphicon-pencil"></span> <?= UOJLocale::get('modify my profile') ?></a>
         <?php endif ?>
         <?php endif ?>
         
+        <?php if (!$blog_blocked): ?>
         <a type="button" class="btn btn-success btn-sm" href="<?= HTML::blog_url($user['username'], '/') ?>"><span class="glyphicon glyphicon-arrow-right"></span> <?= UOJLocale::get('visit his blog', $user['username']) ?></a>
+        <?php endif ?>
         
         <div class="top-buffer-lg"></div>
         <div class="list-group">

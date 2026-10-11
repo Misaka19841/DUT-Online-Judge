@@ -1,4 +1,5 @@
 <?php
+$pm_blocked = contest_security_mode_should_block_feature('private_message', Auth::user());
 if (Auth::check()) {
 	$new_user_msg_num = DB::selectCount([
         "select count(*) from user_msg",
@@ -310,7 +311,9 @@ if (!isset($ShowPageHeader)) {
 						</a>
 						<ul class="dropdown-menu" role="menu">
 							<li role="presentation"><a href="<?= HTML::url('/user/profile/' . Auth::id()) ?>"><?= UOJLocale::get('my profile') ?></a></li>
+                                                        <?php if (!$pm_blocked): ?>
 							<li role="presentation"><a href="<?= HTML::url('/user/msg') ?>"><?= UOJLocale::get('private message') ?>&nbsp;&nbsp;<?= $new_user_msg_num_html ?></a></li>
+                                                        <?php endif ?>
 							<li role="presentation"><a href="<?= HTML::url('/user/system-msg') ?>"><?= UOJLocale::get('system message') ?>&nbsp;&nbsp;<?= $new_system_msg_num_html ?></a></li>
 							<?php if (isSuperUser(Auth::user())): ?>
 								<li role="presentation"><a href="<?= HTML::url('/super-manage') ?>"><?= UOJLocale::get('system manage') ?></a></li>

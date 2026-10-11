@@ -1,51 +1,5 @@
 <?php
-// 首先检查安全模式
-function checkSafeMode() {
-    try {
-        $row = DB::selectFirst([
-            "select value from meta",
-            "where", ["name" => "safemode"],
-            DB::limit(1)
-        ]);
-        return $row ? intval($row['value']) === 1 : false;
-    } catch (Exception $e) {
-        error_log("安全模式检查异常: " . $e->getMessage());
-        return false; // 异常时返回false
-    }
-}
-
-// 检查安全模式
-$safeModeEnabled = false;
-
-if ($safeModeEnabled) {
-    // 安全模式开启，显示提示信息并停止执行
-    echoUOJPageHeader('比赛模式已开启');
-    ?>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <div class="panel panel-danger top-buffer-lg">
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><?= UOJLocale::get('notice') ?></h3>
-                    </div>
-
-			<div class="panel-body text-center">
-                        <h2><i class="fa fa-lock fa-3x text-danger"></i></h2>
-                        <h3>管理员开启了比赛模式，提交记录页面已关闭</h3>
-                        <p class="text-muted">比赛期间为了公平起见，暂停查看提交记录功能</p>
-			<hr>
-                                <a href="/" class="btn btn-primary">返回首页</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <?php
-    echoUOJPageFooter();
-    exit(); // 停止执行后续代码
-}
+contest_security_mode_block_if_needed('submission', Auth::user());
 
 	$conds = [];
     $config = ['judge_time_hidden' => true];

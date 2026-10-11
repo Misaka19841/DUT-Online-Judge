@@ -1,4 +1,5 @@
 <?php
+contest_security_mode_block_if_needed('blog', Auth::user());
 requireLib('mathjax');
 requireLib('shjs');
 echoUOJPageHeader('博客搜索');

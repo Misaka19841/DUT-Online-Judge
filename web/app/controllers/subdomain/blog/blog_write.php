@@ -1,4 +1,5 @@
 <?php
+        contest_security_mode_block_if_needed('blog', Auth::user());
 	UOJUserBlog::userCanManage(Auth::user()) || UOJResponse::page403();
 
 	$blog_type = UOJRequest::option(UOJRequest::GET, 'type', ['B', 'S']);
