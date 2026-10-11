@@ -361,6 +361,124 @@ $submission_frequency_form->handle = function (&$vdata) {
 };
 $submission_frequency_form->runAtServer();
 
+function super_manage_render_batch_report(string $title, array $success, array $failed): string {
+        $html = '<h3>'.HTML::escape($title).'</h3>';
+        if ($success) {
+                $html .= '<h4>成功</h4><ul>';
+                foreach ($success as $line) {
+                        $html .= '<li>'.$line.'</li>';
+                }
+                $html .= '</ul>';
+        }
+        if ($failed) {
+                $html .= '<h4>失败</h4><ul>';
+                foreach ($failed as $line) {
+                        $html .= '<li>'.$line.'</li>';
+                }
+                $html .= '</ul>';
+        }
+        if (!$success && !$failed) {
+                $html .= '<p>没有可显示的结果。</p>';
+        }
+        return $html;
+}
+
+if (isset($_POST['problem_import_submit'])) {
+        crsf_defend();
+
+        $tmp_name = UOJForm::uploadedFileTmpName('problem_import_file');
+        if ($tmp_name === null) {
+                UOJResponse::message('请上传题包压缩文件。');
+        }
+
+        try {
+                $report = UOJProblemBatchManager::importFromArchive($tmp_name);
+                $success = [];
+                foreach ($report['success'] as $row) {
+                        $success[] = '源目录 '.HTML::escape($row['path']).' 导入为 '
+                                .HTML::link("/problem/{$row['id']}", '#'.$row['id'].' '.$row['title']);
+                }
+                $failed = [];
+                foreach ($report['failed'] as $row) {
+                        $failed[] = '源目录 '.HTML::escape($row['path']).'：'.HTML::escape($row['error']);
+                }
+
+                $title = '批量导入完成';
+                if ($report['contest_id'] !== null) {
+                        $title .= '（已尝试挂入比赛 #'.$report['contest_id'].'）';
+                }
+                UOJResponse::message(super_manage_render_batch_report($title, $success, $failed));
+        } catch (Exception $e) {
+                UOJResponse::message('导入失败：'.HTML::escape($e->getMessage()));
+        }
+}
+
+$problem_batch_tag_form = new UOJForm('problem_batch_tag');
+$problem_batch_tag_form->addTextArea('tag_problem_ids', '题号列表', '', 'validateNothing', null);
+$problem_batch_tag_form->addInput('tags', 'text', '标签列表', '', 'validateNothing', null);
+$problem_batch_tag_form->addSelect('tag_mode', [
+        'add' => '追加这些标签',
+        'replace' => '设置为这些标签',
+        'remove' => '移除这些标签',
+        'clear' => '清空所有标签'
+], '操作类型', 'add');
+$problem_batch_tag_form->submit_button_config['text'] = '执行标签操作';
+$problem_batch_tag_form->handle = function() {
+        $ids = UOJProblemBatchManager::parseProblemIdList(UOJRequest::post('tag_problem_ids'));
+        $mode = UOJRequest::post('tag_mode');
+        $tags = $mode === 'clear' ? [] : UOJProblemBatchManager::parseTags(UOJRequest::post('tags'));
+
+        $success = [];
+        $failed = [];
+        foreach ($ids as $id) {
+                $problem = UOJProblem::query($id);
+                if (!$problem) {
+                        $failed[] = '题目 #'.$id.' 不存在';
+                        continue;
+                }
+                try {
+                        $new_tags = UOJProblemBatchManager::updateProblemTags($problem, $tags, $mode);
+                        $success[] = HTML::link($problem->getUri(), '#'.$id).'：'
+                                .HTML::escape($new_tags ? implode(', ', $new_tags) : '(无标签)');
+                } catch (Exception $e) {
+                        $failed[] = '题目 #'.$id.'：'.HTML::escape($e->getMessage());
+                }
+        }
+        UOJResponse::message(super_manage_render_batch_report('批量标签操作完成', $success, $failed));
+};
+$problem_batch_tag_form->runAtServer();
+
+$problem_batch_visibility_form = new UOJForm('problem_batch_visibility');
+$problem_batch_visibility_form->addTextArea('visibility_problem_ids', '题号列表', '', 'validateNothing', null);
+$problem_batch_visibility_form->addSelect('visibility', [
+        'hidden' => '设为隐藏',
+        'visible' => '设为公开'
+], '可见性', 'visible');
+$problem_batch_visibility_form->submit_button_config['text'] = '执行显隐操作';
+$problem_batch_visibility_form->handle = function() {
+        $ids = UOJProblemBatchManager::parseProblemIdList(UOJRequest::post('visibility_problem_ids'));
+        $is_hidden = UOJRequest::post('visibility') === 'hidden';
+
+        $success = [];
+        $failed = [];
+        foreach ($ids as $id) {
+                $problem = UOJProblem::query($id);
+                if (!$problem) {
+                        $failed[] = '题目 #'.$id.' 不存在';
+                        continue;
+                }
+                try {
+                        UOJProblemBatchManager::updateProblemVisibility($problem, $is_hidden);
+                        $success[] = HTML::link($problem->getUri(), '#'.$id).'：'
+                                .($is_hidden ? '已隐藏' : '已公开');
+                } catch (Exception $e) {
+                        $failed[] = '题目 #'.$id.'：'.HTML::escape($e->getMessage());
+                }
+        }
+        UOJResponse::message(super_manage_render_batch_report('批量显隐操作完成', $success, $failed));
+};
+$problem_batch_visibility_form->runAtServer();
+
 $safemode_notice = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['form_safemode'])) {
@@ -417,6 +535,10 @@ $tabs_info = [
 		'name' => '博客管理',
 		'url' => "/super-manage/blogs"
 	],
+        'problems' => [
+                'name' => '题目批量',
+                'url' => '/super-manage/problems'
+        ],
 	/*
 	'submissions' => [
 		'name' => '提交记录',
@@ -526,6 +648,46 @@ requireLib('morris');
 				<h4>隐藏评论</h4>
 				<?php $comment_hider->printHTML(); ?>
 			</div>
+                <?php elseif ($cur_tab === 'problems'): ?>
+                        <div class="panel panel-default">
+                                <div class="panel-heading">批量导入题包</div>
+                                <div class="panel-body">
+                                        <p>上传一个总压缩包。若根目录存在 <code>manifest.json</code>，则按其中的 <code>problems</code> 数组顺序导入；否则会自动扫描根目录下的一级子目录逐题导入；若根目录本身就含有 <code>title.txt</code>、<code>statement.md</code> 和数据包，则按单题处理。</p>
+                                        <p>单题目录默认读取 <code>title.txt</code>、<code>statement.md</code>、<code>data.zip</code>；如果没有 <code>data.zip</code>，则读取 <code>data/</code> 目录并临时打包。导入后默认隐藏、默认无标签；若 <code>manifest.json</code> 顶层给出 <code>contest_id</code>，则会按导入顺序自动挂入该比赛。</p>
+                                        <p><code>manifest.json</code> 示例：<code>{"contest_id":123,"problems":[{"path":"A"},{"path":"B","title_file":"name.txt","statement_file":"statement.md","data_dir":"data"}]}</code></p>
+                                        <form method="post" enctype="multipart/form-data" class="form-horizontal">
+                                                <input type="hidden" name="_token" value="<?= crsf_token() ?>">
+                                                <input type="hidden" name="problem_import_submit" value="1">
+                                                <div class="form-group">
+                                                        <label for="input-problem-import-file" class="col-sm-2 control-label">题包压缩文件</label>
+                                                        <div class="col-sm-6">
+                                                                <input type="file" class="form-control" id="input-problem-import-file" name="problem_import_file" accept=".zip" />
+                                                        </div>
+                                                </div>
+                                                <div class="form-group">
+                                                        <div class="text-center" style="text-align: center;">
+                                                                <button type="submit" class="btn btn-primary">开始导入</button>
+                                                        </div>
+                                                </div>
+                                        </form>
+                                </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                                <div class="panel-heading">批量设置标签</div>
+                                <div class="panel-body">
+                                        <p>题号支持空格、逗号、换行和区间，如 <code>100-105 108 110</code>。</p>
+                                        <?php $problem_batch_tag_form->printHTML(); ?>
+                                </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                                <div class="panel-heading">批量显隐藏</div>
+                                <div class="panel-body">
+                                        <p>批量公开时会沿用现有规则：若题目仍处于未结束比赛中，则不会被公开。</p>
+                                        <?php $problem_batch_visibility_form->printHTML(); ?>
+                                </div>
+                        </div>
 		<?php elseif ($cur_tab === 'submissions'): ?>
 			<div>
 				<h4>删除赛前提交记录</h4>
