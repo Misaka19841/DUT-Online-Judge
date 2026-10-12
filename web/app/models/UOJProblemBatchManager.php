@@ -135,22 +135,7 @@ class UOJProblemBatchManager {
         $problem->info['is_hidden'] = $is_hidden ? 1 : 0;
     }
 
-    public static function exportToArchive(array $ids, array $options = []): array {
-        $options += [
-            'contest_id' => null
-        ];
-
-        $contest_id = null;
-        if ($options['contest_id'] !== null && $options['contest_id'] !== '') {
-            $contest_id = self::normalizeUIntLike($options['contest_id']);
-            if ($contest_id === null || !validateUInt($contest_id)) {
-                throw new Exception('比赛 ID 非法');
-            }
-            if (!UOJContest::query($contest_id)) {
-                throw new Exception("不存在比赛 #{$contest_id}");
-            }
-        }
-
+    public static function exportToArchive(array $ids): array {
         $zip_relative_path = FS::randomAvailableTmpFileName() . '.zip';
         $zip_full_path = UOJContext::storagePath() . $zip_relative_path;
 
@@ -160,46 +145,24 @@ class UOJProblemBatchManager {
         }
 
         try {
-            $manifest = [
-                'problems' => []
-            ];
-            if ($contest_id !== null) {
-                $manifest['contest_id'] = $contest_id;
-            }
-
+            $index = 1;
             foreach ($ids as $id) {
                 $problem = UOJProblem::query($id);
                 if (!$problem) {
                     throw new Exception("题目 #{$id} 不存在");
                 }
-
-                $data_zip_path = $problem->getDataZipPath();
-                if (!is_file($data_zip_path)) {
-                    throw new Exception("题目 #{$id} 缺少主数据包");
+                $inner_zip_path = self::createSingleProblemPackageArchive($problem);
+                try {
+                    $entry_name = sprintf('problem_%03d.zip', $index);
+                    if (!$zip->addFile($inner_zip_path, $entry_name)) {
+                        throw new Exception("写入题目 #{$id} 的导出包失败");
+                    }
+                } finally {
+                    if (is_file($inner_zip_path)) {
+                        unlink($inner_zip_path);
+                    }
                 }
-
-                $content = $problem->queryContent();
-                $dir = (string)$id;
-
-                $manifest['problems'][] = ['path' => $dir];
-
-                if (!$zip->addFromString("{$dir}/title.txt", self::decodeProblemTitle($problem->info['title']))) {
-                    throw new Exception("写入题目 #{$id} 的 title.txt 失败");
-                }
-                if (!$zip->addFromString("{$dir}/statement.md", $content['statement_md'])) {
-                    throw new Exception("写入题目 #{$id} 的 statement.md 失败");
-                }
-                if (!$zip->addFile($data_zip_path, "{$dir}/data.zip")) {
-                    throw new Exception("写入题目 #{$id} 的 data.zip 失败");
-                }
-            }
-
-            $manifest_json = json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            if ($manifest_json === false) {
-                throw new Exception('生成 manifest.json 失败');
-            }
-            if (!$zip->addFromString('manifest.json', $manifest_json . "\n")) {
-                throw new Exception('写入 manifest.json 失败');
+                $index++;
             }
         } catch (Exception $e) {
             $zip->close();
@@ -216,13 +179,9 @@ class UOJProblemBatchManager {
             throw new Exception('关闭导出压缩包失败');
         }
 
-        $download_name = 'uoj-problems-export';
-        if ($contest_id !== null) {
-            $download_name .= "-contest-{$contest_id}";
-        }
         return [
             'zip_path' => $zip_full_path,
-            'download_name' => $download_name . '.zip'
+            'download_name' => 'uoj-problems-export.zip'
         ];
     }
 
@@ -248,26 +207,27 @@ class UOJProblemBatchManager {
             $zip->close();
 
             $root = self::normalizeExtractRoot($tmp_root);
-            $manifest = self::loadManifest($root);
-            $contest = self::loadContest($manifest);
-
             $report = [
-                'contest_id' => $contest ? $contest->info['id'] : null,
                 'success' => [],
                 'failed' => []
             ];
 
-            foreach ($manifest['problems'] as $problem_cfg) {
+            $packages = self::collectPackages($root);
+            foreach ($packages as $package) {
                 try {
-                    $problem = self::importSingleProblem($root, $problem_cfg, $contest, $options);
+                    if ($package['type'] === 'dir') {
+                        $problem = self::importSingleProblemFromDir($package['path'], $options);
+                    } else {
+                        $problem = self::importSingleProblemFromArchive($package['path'], $options);
+                    }
                     $report['success'][] = [
-                        'path' => $problem_cfg['path'],
+                        'path' => $package['name'],
                         'id' => $problem->info['id'],
                         'title' => $problem->info['title']
                     ];
                 } catch (Exception $e) {
                     $report['failed'][] = [
-                        'path' => $problem_cfg['path'] ?? '(unknown)',
+                        'path' => $package['name'],
                         'error' => $e->getMessage()
                     ];
                 }
@@ -287,68 +247,38 @@ class UOJProblemBatchManager {
         return $root;
     }
 
-    private static function loadManifest(string $root): array {
-        $manifest_file = "{$root}/manifest.json";
-        if (is_file($manifest_file)) {
-            $manifest = json_decode(file_get_contents($manifest_file), true);
-            if (!is_array($manifest)) {
-                throw new Exception('manifest.json 不是合法 JSON');
-            }
-            if (!isset($manifest['problems']) || !is_array($manifest['problems'])) {
-                throw new Exception('manifest.json 缺少 problems 数组');
-            }
-            $problems = [];
-            foreach ($manifest['problems'] as $problem_cfg) {
-                if (!is_array($problem_cfg) || !isset($problem_cfg['path'])) {
-                    throw new Exception('manifest.json 中存在无效题目项');
-                }
-                $problems[] = $problem_cfg;
-            }
-            $manifest['problems'] = $problems;
-            return $manifest;
+    private static function importSingleProblemFromArchive(string $zip_file_name, array $options): UOJProblem {
+        $tmp_root = '/tmp/uoj_problem_single_import_' . uojRandString(20);
+        if (!mkdir($tmp_root, 0777, true) && !is_dir($tmp_root)) {
+            throw new Exception('创建临时目录失败');
         }
+        try {
+            $zip = new ZipArchive();
+            if ($zip->open($zip_file_name) !== true) {
+                throw new Exception('题目包打开失败');
+            }
+            if (!$zip->extractTo($tmp_root)) {
+                $zip->close();
+                throw new Exception('题目包解压失败');
+            }
+            $zip->close();
 
-        if (is_file("{$root}/title.txt") && is_file("{$root}/statement.md")) {
-            return [
-                'problems' => [
-                    ['path' => '.']
-                ]
-            ];
-        }
-
-        $problems = [];
-        foreach (FS::scandir($root) as $name) {
-            if (is_dir("{$root}/{$name}")) {
-                $problems[] = ['path' => $name];
+            $root = self::normalizeExtractRoot($tmp_root);
+            if (!self::isProblemPackageDir($root)) {
+                throw new Exception('题目包格式不合法');
             }
+            return self::importSingleProblemFromDir($root, $options);
+        } finally {
+            self::removeDir($tmp_root);
         }
-        if (!$problems) {
-            throw new Exception('未找到 manifest.json，也没有可导入的题目目录');
-        }
-        return ['problems' => $problems];
     }
 
-    private static function loadContest(array $manifest): ?UOJContest {
-        if (!isset($manifest['contest_id'])) {
-            return null;
-        }
-        $contest_id = self::normalizeUIntLike($manifest['contest_id']);
-        if ($contest_id === null || !validateUInt($contest_id)) {
-            throw new Exception('manifest.json 中 contest_id 非法');
-        }
-        $contest = UOJContest::query($contest_id);
-        if (!$contest) {
-            throw new Exception("不存在比赛 #{$contest_id}");
-        }
-        return $contest;
-    }
-
-    private static function importSingleProblem(string $root, array $problem_cfg, ?UOJContest $contest, array $options): UOJProblem {
-        $problem_dir = self::problemDir($root, $problem_cfg);
+    private static function importSingleProblemFromDir(string $problem_dir, array $options): UOJProblem {
         if (!is_dir($problem_dir)) {
-            throw new Exception("目录不存在：{$problem_cfg['path']}");
+            throw new Exception('题目包目录不存在');
         }
 
+        $problem_cfg = [];
         $title = self::loadProblemTitle($problem_dir, $problem_cfg);
         $statement_md = self::loadProblemStatement($problem_dir, $problem_cfg);
         $statement_html = self::compileStatement($statement_md);
@@ -367,14 +297,6 @@ class UOJProblemBatchManager {
                 throw new Exception("同步数据失败：{$err}");
             }
 
-            if ($contest) {
-                DB::insert([
-                    "insert ignore into contests_problems",
-                    "(contest_id, problem_id)",
-                    "values", DB::tuple([$contest->info['id'], $problem->info['id']])
-                ]);
-            }
-
             return $problem;
         } finally {
             if ($data_zip !== null && strStartWith($data_zip, '/tmp/uoj_problem_import_data_') && is_file($data_zip)) {
@@ -383,13 +305,82 @@ class UOJProblemBatchManager {
         }
     }
 
-    private static function problemDir(string $root, array $problem_cfg): string {
-        $path = $problem_cfg['path'];
-        if ($path === '.') {
-            return $root;
+    private static function collectPackages(string $root): array {
+        if (self::isProblemPackageDir($root)) {
+            return [[
+                'type' => 'dir',
+                'name' => '.',
+                'path' => $root
+            ]];
         }
-        $path = trim($path, "/\\");
-        return "{$root}/{$path}";
+
+        $packages = [];
+        foreach (FS::scandir($root) as $name) {
+            $full_path = "{$root}/{$name}";
+            if (is_dir($full_path) && self::isProblemPackageDir($full_path)) {
+                $packages[] = [
+                    'type' => 'dir',
+                    'name' => $name,
+                    'path' => $full_path
+                ];
+            } elseif (is_file($full_path) && strtolower(substr($name, -4)) === '.zip') {
+                $packages[] = [
+                    'type' => 'zip',
+                    'name' => $name,
+                    'path' => $full_path
+                ];
+            }
+        }
+        if (!$packages) {
+            throw new Exception('未找到可导入的单题包');
+        }
+        return $packages;
+    }
+
+    private static function isProblemPackageDir(string $dir): bool {
+        return is_file("{$dir}/title.txt")
+            && is_file("{$dir}/statement.md")
+            && (is_file("{$dir}/data.zip") || is_dir("{$dir}/data"));
+    }
+
+    private static function createSingleProblemPackageArchive(UOJProblem $problem): string {
+        $data_zip_path = $problem->getDataZipPath();
+        if (!is_file($data_zip_path)) {
+            throw new Exception("题目 #{$problem->info['id']} 缺少主数据包");
+        }
+
+        $content = $problem->queryContent();
+        $zip_path = UOJContext::storagePath() . FS::randomAvailableTmpFileName() . '.zip';
+        $zip = new ZipArchive();
+        if ($zip->open($zip_path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            throw new Exception("创建题目 #{$problem->info['id']} 的导出包失败");
+        }
+
+        try {
+            if (!$zip->addFromString('title.txt', self::decodeProblemTitle($problem->info['title']))) {
+                throw new Exception("写入题目 #{$problem->info['id']} 的 title.txt 失败");
+            }
+            if (!$zip->addFromString('statement.md', $content['statement_md'])) {
+                throw new Exception("写入题目 #{$problem->info['id']} 的 statement.md 失败");
+            }
+            if (!$zip->addFile($data_zip_path, 'data.zip')) {
+                throw new Exception("写入题目 #{$problem->info['id']} 的 data.zip 失败");
+            }
+        } catch (Exception $e) {
+            $zip->close();
+            if (is_file($zip_path)) {
+                unlink($zip_path);
+            }
+            throw $e;
+        }
+
+        if (!$zip->close()) {
+            if (is_file($zip_path)) {
+                unlink($zip_path);
+            }
+            throw new Exception("关闭题目 #{$problem->info['id']} 的导出包失败");
+        }
+        return $zip_path;
     }
 
     private static function loadProblemTitle(string $problem_dir, array $problem_cfg): string {

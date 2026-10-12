@@ -395,19 +395,15 @@ if (isset($_POST['problem_import_submit'])) {
                 $report = UOJProblemBatchManager::importFromArchive($tmp_name);
                 $success = [];
                 foreach ($report['success'] as $row) {
-                        $success[] = '源目录 '.HTML::escape($row['path']).' 导入为 '
+                        $success[] = '源包 '.HTML::escape($row['path']).' 导入为 '
                                 .HTML::link("/problem/{$row['id']}", '#'.$row['id'].' '.$row['title']);
                 }
                 $failed = [];
                 foreach ($report['failed'] as $row) {
-                        $failed[] = '源目录 '.HTML::escape($row['path']).'：'.HTML::escape($row['error']);
+                        $failed[] = '源包 '.HTML::escape($row['path']).'：'.HTML::escape($row['error']);
                 }
 
-                $title = '批量导入完成';
-                if ($report['contest_id'] !== null) {
-                        $title .= '（已尝试挂入比赛 #'.$report['contest_id'].'）';
-                }
-                UOJResponse::message(super_manage_render_batch_report($title, $success, $failed));
+                UOJResponse::message(super_manage_render_batch_report('批量导入完成', $success, $failed));
         } catch (Exception $e) {
                 UOJResponse::message('导入失败：'.HTML::escape($e->getMessage()));
         }
@@ -415,23 +411,10 @@ if (isset($_POST['problem_import_submit'])) {
 
 $problem_batch_export_form = new UOJForm('problem_batch_export');
 $problem_batch_export_form->addTextArea('export_problem_ids', '题号列表', '', 'validateNothing', null);
-$problem_batch_export_form->addInput('export_contest_id', 'text', '比赛 ID（可选）', '',
-        function($x) {
-                if ($x === '' || validateUInt($x)) {
-                        return '';
-                }
-                return '必须为空或一个非负整数';
-        },
-        null
-);
 $problem_batch_export_form->submit_button_config['text'] = '导出协议包';
 $problem_batch_export_form->handle = function() {
         $ids = UOJProblemBatchManager::parseProblemIdList(UOJRequest::post('export_problem_ids'));
-        $contest_id = trim(UOJRequest::post('export_contest_id'));
-
-        $res = UOJProblemBatchManager::exportToArchive($ids, [
-                'contest_id' => $contest_id === '' ? null : $contest_id
-        ]);
+        $res = UOJProblemBatchManager::exportToArchive($ids);
         UOJResponse::xsendfile($res['zip_path'], [
                 'mimetype' => 'application/zip',
                 'attachment' => $res['download_name']
@@ -678,8 +661,8 @@ requireLib('morris');
                         <div class="panel panel-default">
                                 <div class="panel-heading">题目导出</div>
                                 <div class="panel-body">
-                                        <p>按当前导入协议导出：压缩包根目录包含 <code>manifest.json</code>，每题一个目录，目录内固定为 <code>title.txt</code>、<code>statement.md</code>、<code>data.zip</code>。</p>
-                                        <p>如果填写比赛 ID，就会把它写进导出的 <code>manifest.json</code> 顶层字段 <code>contest_id</code>，便于回灌时自动挂入对应比赛。</p>
+                                        <p>导出结果为一个批量压缩包，里面每个文件都是一个单题包；单题包内部固定为 <code>title.txt</code>、<code>statement.md</code>、<code>data.zip</code>。</p>
+                                        <p>题目包本身不携带 OJ 内部题号或比赛号语义，回灌导入时只会按站上的自增题号顺序新建题目。</p>
                                         <?php $problem_batch_export_form->printHTML(); ?>
                                 </div>
                         </div>
@@ -687,9 +670,9 @@ requireLib('morris');
                         <div class="panel panel-default">
                                 <div class="panel-heading">批量导入题包</div>
                                 <div class="panel-body">
-                                        <p>上传一个总压缩包。若根目录存在 <code>manifest.json</code>，则按其中的 <code>problems</code> 数组顺序导入；否则会自动扫描根目录下的一级子目录逐题导入；若根目录本身就含有 <code>title.txt</code>、<code>statement.md</code> 和数据包，则按单题处理。</p>
-                                        <p>单题目录默认读取 <code>title.txt</code>、<code>statement.md</code>、<code>data.zip</code>；如果没有 <code>data.zip</code>，则读取 <code>data/</code> 目录并临时打包。导入后默认隐藏、默认无标签；若 <code>manifest.json</code> 顶层给出 <code>contest_id</code>，则会按导入顺序自动挂入该比赛。</p>
-                                        <p><code>manifest.json</code> 示例：<code>{"contest_id":123,"problems":[{"path":"A"},{"path":"B","title_file":"name.txt","statement_file":"statement.md","data_dir":"data"}]}</code></p>
+                                        <p>上传一个总压缩包。系统会自动识别其中的多个单题包并逐题导入；如果上传的本身就是单题包，也会按单题处理。</p>
+                                        <p>单题包内部固定读取 <code>title.txt</code>、<code>statement.md</code>、<code>data.zip</code>；如果是目录形式，也支持用 <code>data/</code> 目录代替 <code>data.zip</code>。导入后默认隐藏、默认无标签，不会根据包内信息直接挂比赛。</p>
+                                        <p>协议只有一版：单题包内部固定为 <code>title.txt</code>、<code>statement.md</code>、<code>data.zip</code>。外层压缩包只作为批量承载多个单题包的容器。</p>
                                         <form method="post" enctype="multipart/form-data" class="form-horizontal">
                                                 <input type="hidden" name="_token" value="<?= crsf_token() ?>">
                                                 <input type="hidden" name="problem_import_submit" value="1">
