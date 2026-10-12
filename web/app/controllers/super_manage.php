@@ -413,6 +413,32 @@ if (isset($_POST['problem_import_submit'])) {
         }
 }
 
+$problem_batch_export_form = new UOJForm('problem_batch_export');
+$problem_batch_export_form->addTextArea('export_problem_ids', '题号列表', '', 'validateNothing', null);
+$problem_batch_export_form->addInput('export_contest_id', 'text', '比赛 ID（可选）', '',
+        function($x) {
+                if ($x === '' || validateUInt($x)) {
+                        return '';
+                }
+                return '必须为空或一个非负整数';
+        },
+        null
+);
+$problem_batch_export_form->submit_button_config['text'] = '导出协议包';
+$problem_batch_export_form->handle = function() {
+        $ids = UOJProblemBatchManager::parseProblemIdList(UOJRequest::post('export_problem_ids'));
+        $contest_id = trim(UOJRequest::post('export_contest_id'));
+
+        $res = UOJProblemBatchManager::exportToArchive($ids, [
+                'contest_id' => $contest_id === '' ? null : $contest_id
+        ]);
+        UOJResponse::xsendfile($res['zip_path'], [
+                'mimetype' => 'application/zip',
+                'attachment' => $res['download_name']
+        ]);
+};
+$problem_batch_export_form->runAtServer();
+
 $problem_batch_tag_form = new UOJForm('problem_batch_tag');
 $problem_batch_tag_form->addTextArea('tag_problem_ids', '题号列表', '', 'validateNothing', null);
 $problem_batch_tag_form->addInput('tags', 'text', '标签列表', '', 'validateNothing', null);
@@ -649,6 +675,15 @@ requireLib('morris');
 				<?php $comment_hider->printHTML(); ?>
 			</div>
                 <?php elseif ($cur_tab === 'problems'): ?>
+                        <div class="panel panel-default">
+                                <div class="panel-heading">题目导出</div>
+                                <div class="panel-body">
+                                        <p>按当前导入协议导出：压缩包根目录包含 <code>manifest.json</code>，每题一个目录，目录内固定为 <code>title.txt</code>、<code>statement.md</code>、<code>data.zip</code>。</p>
+                                        <p>如果填写比赛 ID，就会把它写进导出的 <code>manifest.json</code> 顶层字段 <code>contest_id</code>，便于回灌时自动挂入对应比赛。</p>
+                                        <?php $problem_batch_export_form->printHTML(); ?>
+                                </div>
+                        </div>
+
                         <div class="panel panel-default">
                                 <div class="panel-heading">批量导入题包</div>
                                 <div class="panel-body">

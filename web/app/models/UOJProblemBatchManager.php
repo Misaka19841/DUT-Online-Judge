@@ -135,6 +135,97 @@ class UOJProblemBatchManager {
         $problem->info['is_hidden'] = $is_hidden ? 1 : 0;
     }
 
+    public static function exportToArchive(array $ids, array $options = []): array {
+        $options += [
+            'contest_id' => null
+        ];
+
+        $contest_id = null;
+        if ($options['contest_id'] !== null && $options['contest_id'] !== '') {
+            $contest_id = self::normalizeUIntLike($options['contest_id']);
+            if ($contest_id === null || !validateUInt($contest_id)) {
+                throw new Exception('比赛 ID 非法');
+            }
+            if (!UOJContest::query($contest_id)) {
+                throw new Exception("不存在比赛 #{$contest_id}");
+            }
+        }
+
+        $zip_relative_path = FS::randomAvailableTmpFileName() . '.zip';
+        $zip_full_path = UOJContext::storagePath() . $zip_relative_path;
+
+        $zip = new ZipArchive();
+        if ($zip->open($zip_full_path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            throw new Exception('创建导出压缩包失败');
+        }
+
+        try {
+            $manifest = [
+                'problems' => []
+            ];
+            if ($contest_id !== null) {
+                $manifest['contest_id'] = $contest_id;
+            }
+
+            foreach ($ids as $id) {
+                $problem = UOJProblem::query($id);
+                if (!$problem) {
+                    throw new Exception("题目 #{$id} 不存在");
+                }
+
+                $data_zip_path = $problem->getDataZipPath();
+                if (!is_file($data_zip_path)) {
+                    throw new Exception("题目 #{$id} 缺少主数据包");
+                }
+
+                $content = $problem->queryContent();
+                $dir = (string)$id;
+
+                $manifest['problems'][] = ['path' => $dir];
+
+                if (!$zip->addFromString("{$dir}/title.txt", self::decodeProblemTitle($problem->info['title']))) {
+                    throw new Exception("写入题目 #{$id} 的 title.txt 失败");
+                }
+                if (!$zip->addFromString("{$dir}/statement.md", $content['statement_md'])) {
+                    throw new Exception("写入题目 #{$id} 的 statement.md 失败");
+                }
+                if (!$zip->addFile($data_zip_path, "{$dir}/data.zip")) {
+                    throw new Exception("写入题目 #{$id} 的 data.zip 失败");
+                }
+            }
+
+            $manifest_json = json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            if ($manifest_json === false) {
+                throw new Exception('生成 manifest.json 失败');
+            }
+            if (!$zip->addFromString('manifest.json', $manifest_json . "\n")) {
+                throw new Exception('写入 manifest.json 失败');
+            }
+        } catch (Exception $e) {
+            $zip->close();
+            if (is_file($zip_full_path)) {
+                unlink($zip_full_path);
+            }
+            throw $e;
+        }
+
+        if (!$zip->close()) {
+            if (is_file($zip_full_path)) {
+                unlink($zip_full_path);
+            }
+            throw new Exception('关闭导出压缩包失败');
+        }
+
+        $download_name = 'uoj-problems-export';
+        if ($contest_id !== null) {
+            $download_name .= "-contest-{$contest_id}";
+        }
+        return [
+            'zip_path' => $zip_full_path,
+            'download_name' => $download_name . '.zip'
+        ];
+    }
+
     public static function importFromArchive(string $zip_file_name, array $options = []): array {
         $options += [
             'default_hidden' => true
@@ -319,6 +410,10 @@ class UOJProblemBatchManager {
             throw new Exception('题名不能超过 100 个字节');
         }
         return HTML::escape($title);
+    }
+
+    private static function decodeProblemTitle(string $title): string {
+        return htmlspecialchars_decode($title, ENT_QUOTES);
     }
 
     private static function loadProblemStatement(string $problem_dir, array $problem_cfg): string {
