@@ -41,20 +41,23 @@ $toolboxNotice = $toolboxNotice ?? null;
     transform: translateY(-2px);
     box-shadow: 0 16px 36px rgba(30, 52, 84, 0.14);
 }
+.toolbox-tile-content {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 18px;
+    z-index: 1;
+}
 .toolbox-tile-title {
     font-size: 22px;
     font-weight: 700;
     line-height: 1.2;
-    position: relative;
-    z-index: 1;
 }
 .toolbox-tile-subtitle {
     margin-top: 10px;
     font-size: 14px;
     line-height: 1.6;
     color: rgba(36, 54, 76, 0.82);
-    position: relative;
-    z-index: 1;
 }
 .toolbox-tile-emoji {
     position: absolute;
@@ -112,10 +115,12 @@ $toolboxNotice = $toolboxNotice ?? null;
                     <?php if ($item['emoji'] !== ''): ?>
                         <div class="toolbox-tile-emoji"><?= HTML::escape($item['emoji']) ?></div>
                     <?php endif ?>
-                    <div class="toolbox-tile-title"><?= HTML::escape($item['title']) ?></div>
-                    <?php if ($item['subtitle'] !== ''): ?>
-                        <div class="toolbox-tile-subtitle"><?= HTML::escape($item['subtitle']) ?></div>
-                    <?php endif ?>
+                    <div class="toolbox-tile-content">
+                        <div class="toolbox-tile-title"><?= HTML::escape($item['title']) ?></div>
+                        <?php if ($item['subtitle'] !== ''): ?>
+                            <div class="toolbox-tile-subtitle"><?= HTML::escape($item['subtitle']) ?></div>
+                        <?php endif ?>
+                    </div>
                 </a>
             <?php endforeach ?>
         </div>
