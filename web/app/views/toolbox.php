@@ -13,10 +13,6 @@ $toolboxNotice = $toolboxNotice ?? null;
     margin: 0;
     font-weight: 700;
 }
-.toolbox-subtitle {
-    margin-top: 6px;
-    color: #66758A;
-}
 .toolbox-notice {
     margin-bottom: 16px;
     color: #6A7A8E;
@@ -49,12 +45,26 @@ $toolboxNotice = $toolboxNotice ?? null;
     font-size: 22px;
     font-weight: 700;
     line-height: 1.2;
+    position: relative;
+    z-index: 1;
 }
 .toolbox-tile-subtitle {
     margin-top: 10px;
     font-size: 14px;
     line-height: 1.6;
     color: rgba(36, 54, 76, 0.82);
+    position: relative;
+    z-index: 1;
+}
+.toolbox-tile-emoji {
+    position: absolute;
+    left: 50%;
+    top: 34%;
+    transform: translate(-50%, -50%);
+    font-size: 42px;
+    line-height: 1;
+    opacity: 0.95;
+    pointer-events: none;
 }
 @media (max-width: 1199px) {
     .toolbox-grid {
@@ -76,32 +86,38 @@ $toolboxNotice = $toolboxNotice ?? null;
 <div class="toolbox-panel">
     <div class="toolbox-header">
         <h3>工具箱</h3>
-        <div class="toolbox-subtitle">把赛时常用资料整理成磁贴入口，原有参考页直接作为内置工具保留。</div>
     </div>
 
     <?php if ($toolboxNotice !== null): ?>
         <div class="alert alert-info toolbox-notice"><?= HTML::escape($toolboxNotice) ?></div>
     <?php endif ?>
 
-    <div class="toolbox-grid">
-        <?php foreach ($toolboxItems as $item): ?>
-            <?php
-            $colStart = max(1, (int)$item['grid_x'] + 1);
-            $rowStart = max(1, (int)$item['grid_y'] + 1);
-            $colSpan = max(1, (int)$item['grid_w']);
-            $rowSpan = max(1, (int)$item['grid_h']);
-            ?>
-            <a
-                class="toolbox-tile"
-                href="<?= HTML::escape($item['tool_url'] !== '' ? $item['tool_url'] : 'javascript:void(0)') ?>"
-                <?= $item['tool_url'] !== '' ? 'target="_blank"' : '' ?>
-                style="background: <?= HTML::escape($item['tile_color']) ?>; grid-column: <?= $colStart ?> / span <?= $colSpan ?>; grid-row: <?= $rowStart ?> / span <?= $rowSpan ?>;"
-            >
-                <div class="toolbox-tile-title"><?= HTML::escape($item['title']) ?></div>
-                <?php if ($item['subtitle'] !== ''): ?>
-                    <div class="toolbox-tile-subtitle"><?= HTML::escape($item['subtitle']) ?></div>
-                <?php endif ?>
-            </a>
-        <?php endforeach ?>
-    </div>
+    <?php if (empty($toolboxItems) && $toolboxNotice === null): ?>
+        <div class="alert alert-info toolbox-notice">工具箱里还没有工具。</div>
+    <?php elseif (!empty($toolboxItems)): ?>
+        <div class="toolbox-grid">
+            <?php foreach ($toolboxItems as $item): ?>
+                <?php
+                $colStart = max(1, (int)$item['grid_x'] + 1);
+                $rowStart = max(1, (int)$item['grid_y'] + 1);
+                $colSpan = max(1, (int)$item['grid_w']);
+                $rowSpan = max(1, (int)$item['grid_h']);
+                ?>
+                <a
+                    class="toolbox-tile"
+                    href="<?= HTML::escape($item['tool_url'] !== '' ? $item['tool_url'] : 'javascript:void(0)') ?>"
+                    <?= $item['tool_url'] !== '' ? 'target="_blank"' : '' ?>
+                    style="background: <?= HTML::escape($item['tile_color']) ?>; grid-column: <?= $colStart ?> / span <?= $colSpan ?>; grid-row: <?= $rowStart ?> / span <?= $rowSpan ?>;"
+                >
+                    <?php if ($item['emoji'] !== ''): ?>
+                        <div class="toolbox-tile-emoji"><?= HTML::escape($item['emoji']) ?></div>
+                    <?php endif ?>
+                    <div class="toolbox-tile-title"><?= HTML::escape($item['title']) ?></div>
+                    <?php if ($item['subtitle'] !== ''): ?>
+                        <div class="toolbox-tile-subtitle"><?= HTML::escape($item['subtitle']) ?></div>
+                    <?php endif ?>
+                </a>
+            <?php endforeach ?>
+        </div>
+    <?php endif ?>
 </div>
