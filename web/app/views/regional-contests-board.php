@@ -109,6 +109,7 @@ foreach ($regionalContests as $event) {
 .regional-contests-axis-dot {
     position: absolute;
     top: 0;
+    left: 0;
     width: 12px;
     height: 12px;
     border: 2px solid #fff;
@@ -117,6 +118,8 @@ foreach ($regionalContests as $event) {
     box-shadow: 0 2px 6px rgba(41, 60, 84, 0.12);
 }
 .regional-contests-side-right .regional-contests-axis-dot {
+    left: auto;
+    right: 0;
     transform: translate(50%, -50%);
 }
 .regional-contests-axis-time {
@@ -136,6 +139,7 @@ foreach ($regionalContests as $event) {
 }
 .regional-contests-card {
     position: absolute;
+    display: block;
     width: 280px;
     max-height: 220px;
     overflow: auto;
@@ -146,6 +150,8 @@ foreach ($regionalContests as $event) {
     background: rgba(255, 255, 255, 0.98);
     box-shadow: 0 14px 30px rgba(29, 52, 84, 0.10);
     pointer-events: auto;
+    color: inherit;
+    text-decoration: none;
 }
 .regional-contests-card-left {
     left: 58px;
@@ -177,6 +183,14 @@ foreach ($regionalContests as $event) {
 .regional-contests-card-link {
     margin-top: 8px;
     font-size: 13px;
+}
+.regional-contests-card[data-href] {
+    cursor: pointer;
+}
+.regional-contests-card[data-href]:hover,
+.regional-contests-card[data-href]:focus {
+    text-decoration: none;
+    box-shadow: 0 16px 36px rgba(29, 52, 84, 0.16);
 }
 .regional-contests-empty {
     padding: 48px 20px;
@@ -234,12 +248,13 @@ foreach ($regionalContests as $event) {
                         if ($event['venue'] !== '') {
                             $location .= ' / ' . $event['venue'];
                         }
+                        $cardColor = $event['side'] === 'right' ? '#D9534F' : '#337AB7';
                         ?>
                         <div class="regional-contests-axis-point" data-event-id="<?= (int)$event['id'] ?>" style="top: <?= $axisTop ?>px;">
-                            <span class="regional-contests-axis-dot" style="background: <?= HTML::escape($event['accent_color']) ?>;"></span>
+                            <span class="regional-contests-axis-dot" style="background: <?= HTML::escape($cardColor) ?>;"></span>
                             <span class="regional-contests-axis-time"><?= HTML::escape($event['display_time']) ?></span>
                         </div>
-                        <div class="regional-contests-card regional-contests-card-left" data-event-id="<?= (int)$event['id'] ?>" style="top: <?= $cardTop ?>px; border-left-color: <?= HTML::escape($event['accent_color']) ?>;">
+                        <div class="regional-contests-card regional-contests-card-left" data-event-id="<?= (int)$event['id'] ?>"<?= $event['contest_url'] !== '' ? ' data-href="' . HTML::escape($event['contest_url']) . '"' : '' ?> style="top: <?= $cardTop ?>px; border-left-color: <?= HTML::escape($cardColor) ?>;">
                             <div class="regional-contests-card-title"><?= HTML::escape($event['title']) ?></div>
                             <div class="regional-contests-card-city"><?= HTML::escape($location) ?></div>
                             <?php if ($event['teams_summary'] !== ''): ?>
@@ -247,9 +262,6 @@ foreach ($regionalContests as $event) {
                             <?php endif ?>
                             <?php if ($event['note'] !== ''): ?>
                                 <div class="regional-contests-card-note"><?= nl2br(HTML::escape($event['note'])) ?></div>
-                            <?php endif ?>
-                            <?php if ($event['contest_url'] !== ''): ?>
-                                <div class="regional-contests-card-link"><a href="<?= HTML::escape($event['contest_url']) ?>" target="_blank">查看详情</a></div>
                             <?php endif ?>
                         </div>
                     <?php endforeach ?>
@@ -265,12 +277,13 @@ foreach ($regionalContests as $event) {
                         if ($event['venue'] !== '') {
                             $location .= ' / ' . $event['venue'];
                         }
+                        $cardColor = $event['side'] === 'right' ? '#D9534F' : '#337AB7';
                         ?>
                         <div class="regional-contests-axis-point" data-event-id="<?= (int)$event['id'] ?>" style="top: <?= $axisTop ?>px;">
-                            <span class="regional-contests-axis-dot" style="background: <?= HTML::escape($event['accent_color']) ?>;"></span>
+                            <span class="regional-contests-axis-dot" style="background: <?= HTML::escape($cardColor) ?>;"></span>
                             <span class="regional-contests-axis-time"><?= HTML::escape($event['display_time']) ?></span>
                         </div>
-                        <div class="regional-contests-card regional-contests-card-right" data-event-id="<?= (int)$event['id'] ?>" style="top: <?= $cardTop ?>px; right: 58px; border-left-color: <?= HTML::escape($event['accent_color']) ?>;">
+                        <div class="regional-contests-card regional-contests-card-right" data-event-id="<?= (int)$event['id'] ?>"<?= $event['contest_url'] !== '' ? ' data-href="' . HTML::escape($event['contest_url']) . '"' : '' ?> style="top: <?= $cardTop ?>px; right: 58px; border-left-color: <?= HTML::escape($cardColor) ?>;">
                             <div class="regional-contests-card-title"><?= HTML::escape($event['title']) ?></div>
                             <div class="regional-contests-card-city"><?= HTML::escape($location) ?></div>
                             <?php if ($event['teams_summary'] !== ''): ?>
@@ -278,9 +291,6 @@ foreach ($regionalContests as $event) {
                             <?php endif ?>
                             <?php if ($event['note'] !== ''): ?>
                                 <div class="regional-contests-card-note"><?= nl2br(HTML::escape($event['note'])) ?></div>
-                            <?php endif ?>
-                            <?php if ($event['contest_url'] !== ''): ?>
-                                <div class="regional-contests-card-link"><a href="<?= HTML::escape($event['contest_url']) ?>" target="_blank">查看详情</a></div>
                             <?php endif ?>
                         </div>
                     <?php endforeach ?>
@@ -301,12 +311,22 @@ foreach ($regionalContests as $event) {
             var mapLayer = board.querySelector('.regional-contests-map-layer');
             var connectorSvg = board.querySelector('.regional-contests-connector-svg');
             var connectorLayer = board.querySelector('.regional-contests-connector-layer');
+            var clickableCards = Array.prototype.slice.call(board.querySelectorAll('.regional-contests-card[data-href]'));
             var events = [];
             try {
                 events = JSON.parse(board.getAttribute('data-events') || '[]');
             } catch (e) {
                 return;
             }
+
+            clickableCards.forEach(function(card) {
+                card.addEventListener('click', function() {
+                    var href = card.getAttribute('data-href');
+                    if (href) {
+                        window.open(href, '_blank');
+                    }
+                });
+            });
 
             function decodePolygon(coordinate, encodeOffsets) {
                 var result = [];
@@ -496,7 +516,7 @@ foreach ($regionalContests as $event) {
                     var axisY = event.timeline_y;
                     var firstControlX = event.side === 'right' ? marker.x + 70 : marker.x - 70;
                     var secondControlX = event.side === 'right' ? axisX - 120 : axisX + 120;
-                    var connectorColor = event.side === 'right' ? '#337AB7' : event.accent_color;
+                    var connectorColor = event.side === 'right' ? '#D9534F' : '#337AB7';
 
                     var connector = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     connector.setAttribute(
@@ -517,7 +537,7 @@ foreach ($regionalContests as $event) {
                     dot.setAttribute('cx', marker.x.toFixed(2));
                     dot.setAttribute('cy', marker.y.toFixed(2));
                     dot.setAttribute('r', '5.5');
-                    dot.setAttribute('fill', event.accent_color);
+                    dot.setAttribute('fill', connectorColor);
                     dot.setAttribute('stroke', '#fff');
                     dot.setAttribute('stroke-width', '2');
                     connectorLayer.appendChild(dot);
