@@ -231,9 +231,6 @@ foreach ($regionalContests as $event) {
                         $axisTop = round(20 + ($regionalContestsBoardHeight - 40) * $event['position_pct'] / 100);
                         $cardTop = max(8, min($regionalContestsBoardHeight - 210, $axisTop + 14));
                         $location = $event['city_name'];
-                        if ($event['province_name'] !== '') {
-                            $location .= ' / ' . $event['province_name'];
-                        }
                         if ($event['venue'] !== '') {
                             $location .= ' / ' . $event['venue'];
                         }
@@ -265,9 +262,6 @@ foreach ($regionalContests as $event) {
                         $axisTop = round(20 + ($regionalContestsBoardHeight - 40) * $event['position_pct'] / 100);
                         $cardTop = max(8, min($regionalContestsBoardHeight - 210, $axisTop + 14));
                         $location = $event['city_name'];
-                        if ($event['province_name'] !== '') {
-                            $location .= ' / ' . $event['province_name'];
-                        }
                         if ($event['venue'] !== '') {
                             $location .= ' / ' . $event['venue'];
                         }
@@ -492,7 +486,6 @@ foreach ($regionalContests as $event) {
                     });
                 });
 
-                var usedLabelY = [];
                 events.forEach(function(event) {
                     var markerLocal = project(event.longitude, event.latitude);
                     var marker = {
@@ -503,6 +496,7 @@ foreach ($regionalContests as $event) {
                     var axisY = event.timeline_y;
                     var firstControlX = event.side === 'right' ? marker.x + 70 : marker.x - 70;
                     var secondControlX = event.side === 'right' ? axisX - 120 : axisX + 120;
+                    var connectorColor = event.side === 'right' ? '#337AB7' : event.accent_color;
 
                     var connector = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     connector.setAttribute(
@@ -513,7 +507,7 @@ foreach ($regionalContests as $event) {
                         + ', ' + axisX + ' ' + axisY.toFixed(2)
                     );
                     connector.setAttribute('fill', 'none');
-                    connector.setAttribute('stroke', event.accent_color);
+                    connector.setAttribute('stroke', connectorColor);
                     connector.setAttribute('stroke-width', '2.2');
                     connector.setAttribute('stroke-linecap', 'round');
                     connector.setAttribute('opacity', '0.9');
@@ -527,24 +521,6 @@ foreach ($regionalContests as $event) {
                     dot.setAttribute('stroke', '#fff');
                     dot.setAttribute('stroke-width', '2');
                     connectorLayer.appendChild(dot);
-
-                    var labelY = marker.y - 10;
-                    for (var i = 0; i < usedLabelY.length; i++) {
-                        if (Math.abs(labelY - usedLabelY[i]) < 16) {
-                            labelY = usedLabelY[i] + 16;
-                        }
-                    }
-                    usedLabelY.push(labelY);
-
-                    var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    text.setAttribute('x', (marker.x + (event.side === 'right' ? 10 : -10)).toFixed(2));
-                    text.setAttribute('y', labelY.toFixed(2));
-                    text.setAttribute('fill', '#30465F');
-                    text.setAttribute('font-size', '13');
-                    text.setAttribute('font-weight', '600');
-                    text.setAttribute('text-anchor', event.side === 'right' ? 'start' : 'end');
-                    text.textContent = event.city_name;
-                    connectorLayer.appendChild(text);
                 });
             }
         })();
