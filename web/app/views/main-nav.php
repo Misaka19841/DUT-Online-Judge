@@ -57,7 +57,7 @@ $deepseekSelectedSkill = isset($_GET['skill']) ? trim($_GET['skill']) : '';
                 <?php endif ?>
                 <li><a href="<?= HTML::url('/blogs') ?>"><?= UOJLocale::get('blogs') ?></a></li>
 		<li><a href="<?= HTML::url('/faq') ?>"><?= UOJLocale::get('help') ?></a></li>
-		<li><a href="/hall-of-fame">名人堂</a></li>
+                <li><a href="/regional-contests">区域赛</a></li>
 		<li class="dropdown"><a href="javascript:void(0)">赛时可参考内容</a>
 		    <ul class="dropdown-submenu" style="list-style: none; padding-left: 0;">
 			<li style="padding: 0; margin: 0;">
