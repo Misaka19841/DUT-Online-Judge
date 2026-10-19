@@ -30,20 +30,21 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
     color: #666;
     margin-top: 6px;
 }
-.regional-contests-scroll {
+.regional-contests-stage {
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
     overflow-x: auto;
-    padding-bottom: 6px;
+    padding: 8px 0 10px;
 }
 .regional-contests-board {
     position: relative;
-    min-width: 980px;
+    width: max(1280px, 100vw);
     height: <?= (int)$regionalContestsBoardHeight ?>px;
-    border-radius: 18px;
+    min-height: 560px;
     overflow: hidden;
     background:
-        radial-gradient(circle at top, rgba(217, 83, 79, 0.09), transparent 42%),
-        linear-gradient(180deg, #fafbfd 0%, #f4f7fb 100%);
-    border: 1px solid #e6ebf2;
+        radial-gradient(circle at 50% 0, rgba(217, 83, 79, 0.08), transparent 36%),
+        linear-gradient(180deg, #fbfcfe 0%, #f5f8fc 100%);
 }
 .regional-contests-board-svg {
     position: absolute;
@@ -53,8 +54,8 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
 }
 .regional-contests-card {
     position: absolute;
-    width: 250px;
-    max-height: 170px;
+    width: 280px;
+    max-height: 190px;
     overflow: auto;
     padding: 12px 14px;
     border: 1px solid #dfe7f0;
@@ -64,10 +65,10 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
     box-shadow: 0 10px 24px rgba(29, 52, 84, 0.08);
 }
 .regional-contests-card-left {
-    left: 22px;
+    left: clamp(20px, 3vw, 42px);
 }
 .regional-contests-card-right {
-    right: 22px;
+    right: clamp(20px, 3vw, 42px);
 }
 .regional-contests-card-title {
     font-size: 16px;
@@ -104,6 +105,11 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
     color: #6d7b8a;
     font-size: 13px;
 }
+@media (max-width: 1360px) {
+    .regional-contests-card {
+        width: 260px;
+    }
+}
 </style>
 
 <div class="regional-contests-panel">
@@ -122,32 +128,18 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
     <?php if (empty($regionalContests)): ?>
         <div class="regional-contests-empty"><?= HTML::escape($regionalContestsEmptyMessage) ?></div>
     <?php else: ?>
-        <div class="regional-contests-scroll">
-            <div class="regional-contests-board" id="<?= HTML::escape($regionalContestsBoardId) ?>" data-events='<?= HTML::escape($regionalContestsJson) ?>' data-map-url="<?= HTML::escape($regionalContestsMapUrl) ?>">
-                <svg class="regional-contests-board-svg" viewBox="0 0 1000 <?= (int)$regionalContestsBoardHeight ?>" preserveAspectRatio="none" aria-hidden="true">
+        <div class="regional-contests-stage">
+            <div class="regional-contests-board" id="<?= HTML::escape($regionalContestsBoardId) ?>" data-events='<?= HTML::escape($regionalContestsJson) ?>' data-map-url="<?= HTML::escape($regionalContestsMapUrl) ?>" data-board-height="<?= (int)$regionalContestsBoardHeight ?>">
+                <svg class="regional-contests-board-svg" aria-hidden="true">
                     <defs>
                         <linearGradient id="<?= HTML::escape($regionalContestsBoardId) ?>-map-fill" x1="0" y1="0" x2="1" y2="1">
                             <stop offset="0%" stop-color="#EAF2FF"></stop>
                             <stop offset="100%" stop-color="#D8E6FF"></stop>
                         </linearGradient>
                     </defs>
-                    <rect x="0" y="0" width="1000" height="<?= (int)$regionalContestsBoardHeight ?>" fill="transparent"></rect>
-                    <line x1="184" y1="60" x2="184" y2="<?= (int)$regionalContestsBoardHeight - 60 ?>" stroke="#B6C5D8" stroke-width="2" stroke-dasharray="4 8"></line>
-                    <line x1="816" y1="60" x2="816" y2="<?= (int)$regionalContestsBoardHeight - 60 ?>" stroke="#B6C5D8" stroke-width="2" stroke-dasharray="4 8"></line>
                     <g class="regional-contests-map-layer"></g>
                     <g class="regional-contests-connector-layer"></g>
-                    <g class="regional-contests-axis-layer">
-                        <?php foreach ($regionalContests as $event): ?>
-                            <?php
-                            $timelineY = round(60 + ($regionalContestsBoardHeight - 120) * $event['position_pct'] / 100, 2);
-                            $axisX = $event['side'] === 'right' ? 816 : 184;
-                            $textX = $event['side'] === 'right' ? 832 : 168;
-                            $textAnchor = $event['side'] === 'right' ? 'start' : 'end';
-                            ?>
-                            <circle cx="<?= $axisX ?>" cy="<?= $timelineY ?>" r="6" fill="<?= HTML::escape($event['accent_color']) ?>" stroke="#fff" stroke-width="2"></circle>
-                            <text x="<?= $textX ?>" y="<?= $timelineY - 12 ?>" fill="#4E6178" font-size="13" text-anchor="<?= $textAnchor ?>"><?= HTML::escape($event['display_time']) ?></text>
-                        <?php endforeach ?>
-                    </g>
+                    <g class="regional-contests-axis-layer"></g>
                 </svg>
 
                 <?php foreach ($regionalContests as $event): ?>
@@ -178,7 +170,7 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                 <?php endforeach ?>
             </div>
         </div>
-        <div class="regional-contests-legend">中间为中国地图投影，城市位置按经纬度标注；左右时间轴分别承接赛事时间点与信息牌。</div>
+        <div class="regional-contests-legend">地图保持原比例绘制，左右时间轴落在页面外侧留白区域，不再挤在中间小框里。</div>
         <script>
         (function() {
             var board = document.getElementById(<?= json_encode($regionalContestsBoardId) ?>);
@@ -186,8 +178,10 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                 return;
             }
 
+            var svg = board.querySelector('.regional-contests-board-svg');
             var mapLayer = board.querySelector('.regional-contests-map-layer');
             var connectorLayer = board.querySelector('.regional-contests-connector-layer');
+            var axisLayer = board.querySelector('.regional-contests-axis-layer');
             var events = [];
             try {
                 events = JSON.parse(board.getAttribute('data-events') || '[]');
@@ -260,6 +254,9 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                 .then(function(rawGeoJSON) {
                     var geoJSON = decodeGeoJSON(rawGeoJSON);
                     renderBoard(geoJSON);
+                    window.addEventListener('resize', function() {
+                        renderBoard(geoJSON);
+                    });
                 })
                 .catch(function() {});
 
@@ -268,11 +265,50 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                     return;
                 }
 
+                mapLayer.innerHTML = '';
+                connectorLayer.innerHTML = '';
+                axisLayer.innerHTML = '';
+
+                var boardWidth = board.clientWidth;
+                var boardHeight = board.clientHeight;
+                svg.setAttribute('viewBox', '0 0 ' + boardWidth + ' ' + boardHeight);
+
+                var outerGap = Math.min(42, Math.max(20, boardWidth * 0.03));
+                var cardWidth = boardWidth < 1360 ? 260 : 280;
+                var mapWidth = Math.min(620, Math.max(460, boardWidth * 0.33));
+                var mapHeight = boardHeight - 110;
+                var mapLeft = (boardWidth - mapWidth) / 2;
+                var mapTop = 45;
+                var leftAxisX = outerGap + cardWidth + Math.max(60, (mapLeft - outerGap - cardWidth) * 0.6);
+                var rightAxisX = boardWidth - leftAxisX;
+                var axisTop = 55;
+                var axisBottom = boardHeight - 55;
+
+                var leftAxisLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                leftAxisLine.setAttribute('x1', leftAxisX.toFixed(2));
+                leftAxisLine.setAttribute('y1', axisTop.toFixed(2));
+                leftAxisLine.setAttribute('x2', leftAxisX.toFixed(2));
+                leftAxisLine.setAttribute('y2', axisBottom.toFixed(2));
+                leftAxisLine.setAttribute('stroke', '#B6C5D8');
+                leftAxisLine.setAttribute('stroke-width', '2');
+                leftAxisLine.setAttribute('stroke-dasharray', '4 8');
+                axisLayer.appendChild(leftAxisLine);
+
+                var rightAxisLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                rightAxisLine.setAttribute('x1', rightAxisX.toFixed(2));
+                rightAxisLine.setAttribute('y1', axisTop.toFixed(2));
+                rightAxisLine.setAttribute('x2', rightAxisX.toFixed(2));
+                rightAxisLine.setAttribute('y2', axisBottom.toFixed(2));
+                rightAxisLine.setAttribute('stroke', '#B6C5D8');
+                rightAxisLine.setAttribute('stroke-width', '2');
+                rightAxisLine.setAttribute('stroke-dasharray', '4 8');
+                axisLayer.appendChild(rightAxisLine);
+
                 var mapRect = {
-                    x: 312,
-                    y: 70,
-                    width: 376,
-                    height: <?= (int)$regionalContestsBoardHeight - 140 ?>
+                    x: mapLeft,
+                    y: mapTop,
+                    width: mapWidth,
+                    height: mapHeight
                 };
 
                 var bounds = {
@@ -328,11 +364,33 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                 });
 
                 var usedLabelY = [];
-                events.forEach(function(event, index) {
+                events.forEach(function(event) {
                     var marker = project(event.longitude, event.latitude);
-                    var axisX = event.side === 'right' ? 816 : 184;
-                    var midX = event.side === 'right' ? 718 : 282;
+                    var axisX = event.side === 'right' ? rightAxisX : leftAxisX;
+                    var midX = event.side === 'right'
+                        ? mapRect.x + mapRect.width + Math.max(24, (axisX - (mapRect.x + mapRect.width)) * 0.42)
+                        : mapRect.x - Math.max(24, (mapRect.x - axisX) * 0.42);
                     var axisY = event.timeline_y;
+                    var axisTextX = event.side === 'right' ? axisX + 16 : axisX - 16;
+                    var axisTextAnchor = event.side === 'right' ? 'start' : 'end';
+
+                    var axisDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    axisDot.setAttribute('cx', axisX.toFixed(2));
+                    axisDot.setAttribute('cy', axisY.toFixed(2));
+                    axisDot.setAttribute('r', '6');
+                    axisDot.setAttribute('fill', event.accent_color);
+                    axisDot.setAttribute('stroke', '#fff');
+                    axisDot.setAttribute('stroke-width', '2');
+                    axisLayer.appendChild(axisDot);
+
+                    var axisText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    axisText.setAttribute('x', axisTextX.toFixed(2));
+                    axisText.setAttribute('y', (axisY - 12).toFixed(2));
+                    axisText.setAttribute('fill', '#4E6178');
+                    axisText.setAttribute('font-size', '13');
+                    axisText.setAttribute('text-anchor', axisTextAnchor);
+                    axisText.textContent = event.display_time;
+                    axisLayer.appendChild(axisText);
 
                     var connector = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     connector.setAttribute(

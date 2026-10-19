@@ -69,6 +69,7 @@ class RegionalContest {
                 'id' => $event['id'],
                 'title' => $event['title'],
                 'city_name' => $event['city_name'],
+                'display_time' => $event['display_time'],
                 'longitude' => $event['longitude'],
                 'latitude' => $event['latitude'],
                 'side' => $event['side'],
