@@ -73,7 +73,7 @@ foreach ($regionalContests as $event) {
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 360px;
+    width: 430px;
     z-index: 3;
 }
 .regional-contests-side-left {
@@ -140,7 +140,7 @@ foreach ($regionalContests as $event) {
 .regional-contests-card {
     position: absolute;
     display: block;
-    width: 280px;
+    width: 340px;
     max-height: 220px;
     overflow: auto;
     padding: 12px 14px;
@@ -165,6 +165,9 @@ foreach ($regionalContests as $event) {
     font-weight: 700;
     line-height: 1.35;
     margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .regional-contests-card-city {
     color: #3f5873;
@@ -418,8 +421,8 @@ foreach ($regionalContests as $event) {
                 var leftAxisX = 24;
                 var rightAxisX = boardWidth - 24;
 
-                var leftCardWidth = Math.min(320, Math.max(180, containerLeft - 88));
-                var rightCardWidth = Math.min(320, Math.max(180, boardWidth - containerRight - 88));
+                var leftCardWidth = Math.min(390, Math.max(240, containerLeft - 88));
+                var rightCardWidth = Math.min(390, Math.max(240, boardWidth - containerRight - 88));
                 var leftCardLeft = Math.max(58, containerLeft - leftCardWidth - 24);
 
                 Array.prototype.forEach.call(board.querySelectorAll('.regional-contests-card-left'), function(card) {
