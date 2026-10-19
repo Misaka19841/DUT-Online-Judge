@@ -107,41 +107,13 @@ class RegionalContest {
     }
 
     private static function attachLayout(array $events): array {
-        $left = [];
-        $right = [];
-
-        foreach ($events as $event) {
-            if ($event['side'] === 'right') {
-                $right[] = $event;
-            } else {
-                $left[] = $event;
-            }
-        }
-
-        $left = self::assignSidePositions($left);
-        $right = self::assignSidePositions($right);
-
-        $merged = [];
-        foreach ([$left, $right] as $bucket) {
-            foreach ($bucket as $event) {
-                $merged[$event['id']] = $event;
-            }
-        }
-
-        $result = [];
-        foreach ($events as $event) {
-            $result[] = $merged[$event['id']];
-        }
-        return $result;
-    }
-
-    private static function assignSidePositions(array $events): array {
         $count = count($events);
         if ($count === 0) {
             return $events;
         }
 
-        usort($events, function ($a, $b) {
+        $sorted = $events;
+        usort($sorted, function ($a, $b) {
             if ($a['timestamp'] !== $b['timestamp']) {
                 return $a['timestamp'] <=> $b['timestamp'];
             }
@@ -154,38 +126,49 @@ class RegionalContest {
         $lower = 4.0;
         $upper = 96.0;
         $span = $upper - $lower;
-        $positions = [];
+        $timestamps = array_values(array_unique(array_map(function ($event) {
+            return $event['timestamp'];
+        }, $sorted)));
+        sort($timestamps, SORT_NUMERIC);
 
-        $minTimestamp = $events[0]['timestamp'];
-        $maxTimestamp = $events[$count - 1]['timestamp'];
-        if ($count === 1 || $minTimestamp === $maxTimestamp) {
-            for ($i = 0; $i < $count; $i++) {
-                $positions[$i] = $count === 1
-                    ? 50.0
-                    : $lower + $span * ($i + 1) / ($count + 1);
+        $timestampPositions = [];
+        $timestampCount = count($timestamps);
+        $minTimestamp = $timestamps[0];
+        $maxTimestamp = $timestamps[$timestampCount - 1];
+
+        if ($timestampCount === 1 || $minTimestamp === $maxTimestamp) {
+            $center = 50.0;
+            foreach ($timestamps as $timestamp) {
+                $timestampPositions[$timestamp] = $center;
             }
         } else {
-            for ($i = 0; $i < $count; $i++) {
-                $positions[$i] = $lower + $span * ($events[$i]['timestamp'] - $minTimestamp) / ($maxTimestamp - $minTimestamp);
+            foreach ($timestamps as $timestamp) {
+                $timestampPositions[$timestamp] = $lower + $span * ($timestamp - $minTimestamp) / ($maxTimestamp - $minTimestamp);
             }
 
-            $minGap = max(7.0, min(14.0, $span / ($count + 1)));
-            for ($i = 1; $i < $count; $i++) {
-                $positions[$i] = max($positions[$i], $positions[$i - 1] + $minGap);
+            $minGap = max(7.0, min(14.0, $span / ($timestampCount + 1)));
+            for ($i = 1; $i < $timestampCount; $i++) {
+                $current = $timestamps[$i];
+                $prev = $timestamps[$i - 1];
+                $timestampPositions[$current] = max($timestampPositions[$current], $timestampPositions[$prev] + $minGap);
             }
-            for ($i = $count - 2; $i >= 0; $i--) {
-                $positions[$i] = min($positions[$i], $positions[$i + 1] - $minGap);
+            for ($i = $timestampCount - 2; $i >= 0; $i--) {
+                $current = $timestamps[$i];
+                $next = $timestamps[$i + 1];
+                $timestampPositions[$current] = min($timestampPositions[$current], $timestampPositions[$next] - $minGap);
             }
 
-            if ($positions[0] < $lower || $positions[$count - 1] > $upper) {
-                for ($i = 0; $i < $count; $i++) {
-                    $positions[$i] = $lower + $span * ($i + 1) / ($count + 1);
+            $firstTimestamp = $timestamps[0];
+            $lastTimestamp = $timestamps[$timestampCount - 1];
+            if ($timestampPositions[$firstTimestamp] < $lower || $timestampPositions[$lastTimestamp] > $upper) {
+                foreach ($timestamps as $i => $timestamp) {
+                    $timestampPositions[$timestamp] = $lower + $span * ($i + 1) / ($timestampCount + 1);
                 }
             }
         }
 
-        foreach ($events as $i => &$event) {
-            $event['position_pct'] = round($positions[$i], 2);
+        foreach ($events as &$event) {
+            $event['position_pct'] = round($timestampPositions[$event['timestamp']], 2);
         }
         unset($event);
 

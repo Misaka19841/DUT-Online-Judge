@@ -151,6 +151,7 @@ foreach ($regionalContests as $event) {
     left: 58px;
 }
 .regional-contests-card-right {
+    left: auto;
     right: 58px;
 }
 .regional-contests-card-title {
@@ -275,7 +276,7 @@ foreach ($regionalContests as $event) {
                             <span class="regional-contests-axis-dot" style="background: <?= HTML::escape($event['accent_color']) ?>;"></span>
                             <span class="regional-contests-axis-time"><?= HTML::escape($event['display_time']) ?></span>
                         </div>
-                        <div class="regional-contests-card regional-contests-card-right" data-event-id="<?= (int)$event['id'] ?>" style="top: <?= $cardTop ?>px; border-left-color: <?= HTML::escape($event['accent_color']) ?>;">
+                        <div class="regional-contests-card regional-contests-card-right" data-event-id="<?= (int)$event['id'] ?>" style="top: <?= $cardTop ?>px; right: 58px; border-left-color: <?= HTML::escape($event['accent_color']) ?>;">
                             <div class="regional-contests-card-title"><?= HTML::escape($event['title']) ?></div>
                             <div class="regional-contests-card-city"><?= HTML::escape($location) ?></div>
                             <?php if ($event['teams_summary'] !== ''): ?>
@@ -406,7 +407,6 @@ foreach ($regionalContests as $event) {
                 var leftCardWidth = Math.min(320, Math.max(180, containerLeft - 88));
                 var rightCardWidth = Math.min(320, Math.max(180, boardWidth - containerRight - 88));
                 var leftCardLeft = Math.max(58, containerLeft - leftCardWidth - 24);
-                var rightCardLeft = Math.min(boardWidth - rightCardWidth - 58, containerRight + 24);
 
                 Array.prototype.forEach.call(board.querySelectorAll('.regional-contests-card-left'), function(card) {
                     card.style.width = leftCardWidth + 'px';
@@ -415,8 +415,8 @@ foreach ($regionalContests as $event) {
                 });
                 Array.prototype.forEach.call(board.querySelectorAll('.regional-contests-card-right'), function(card) {
                     card.style.width = rightCardWidth + 'px';
-                    card.style.left = rightCardLeft + 'px';
-                    card.style.right = 'auto';
+                    card.style.left = 'auto';
+                    card.style.right = '58px';
                 });
 
                 var baseMapWidth = Math.min(1180, Math.max(840, (containerRight - containerLeft) * 0.95));
