@@ -165,9 +165,6 @@ foreach ($regionalContests as $event) {
     font-weight: 700;
     line-height: 1.35;
     margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 .regional-contests-card-city {
     color: #3f5873;
