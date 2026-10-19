@@ -38,7 +38,7 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
 }
 .regional-contests-board {
     position: relative;
-    width: max(1280px, 100vw);
+    width: 100vw;
     height: <?= (int)$regionalContestsBoardHeight ?>px;
     min-height: 560px;
     overflow: hidden;
@@ -54,7 +54,7 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
 }
 .regional-contests-card {
     position: absolute;
-    width: 280px;
+    width: 260px;
     max-height: 190px;
     overflow: auto;
     padding: 12px 14px;
@@ -65,10 +65,10 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
     box-shadow: 0 10px 24px rgba(29, 52, 84, 0.08);
 }
 .regional-contests-card-left {
-    left: clamp(20px, 3vw, 42px);
+    left: 24px;
 }
 .regional-contests-card-right {
-    right: clamp(20px, 3vw, 42px);
+    right: 24px;
 }
 .regional-contests-card-title {
     font-size: 16px;
@@ -104,11 +104,6 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
     margin-top: 12px;
     color: #6d7b8a;
     font-size: 13px;
-}
-@media (max-width: 1360px) {
-    .regional-contests-card {
-        width: 260px;
-    }
 }
 </style>
 
@@ -154,7 +149,7 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                         $location .= ' / ' . $event['venue'];
                     }
                     ?>
-                    <div class="<?= $cardClass ?>" style="top: <?= $top ?>px; border-left-color: <?= HTML::escape($event['accent_color']) ?>;">
+                    <div class="<?= $cardClass ?>" data-side="<?= HTML::escape($event['side']) ?>" style="top: <?= $top ?>px; border-left-color: <?= HTML::escape($event['accent_color']) ?>;">
                         <div class="regional-contests-card-title"><?= HTML::escape($event['title']) ?></div>
                         <div class="regional-contests-card-city"><?= HTML::escape($location) ?></div>
                         <?php if ($event['teams_summary'] !== ''): ?>
@@ -170,7 +165,7 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                 <?php endforeach ?>
             </div>
         </div>
-        <div class="regional-contests-legend">地图保持原比例绘制，左右时间轴落在页面外侧留白区域，不再挤在中间小框里。</div>
+        <div class="regional-contests-legend">以页面中央 container 的左右边界为界，地图在中间，时间轴与信息牌落在两侧留白。</div>
         <script>
         (function() {
             var board = document.getElementById(<?= json_encode($regionalContestsBoardId) ?>);
@@ -178,10 +173,12 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                 return;
             }
 
+            var container = board.closest('.container.theme-showcase') || document.querySelector('.container.theme-showcase');
             var svg = board.querySelector('.regional-contests-board-svg');
             var mapLayer = board.querySelector('.regional-contests-map-layer');
             var connectorLayer = board.querySelector('.regional-contests-connector-layer');
             var axisLayer = board.querySelector('.regional-contests-axis-layer');
+            var cards = Array.prototype.slice.call(board.querySelectorAll('.regional-contests-card'));
             var events = [];
             try {
                 events = JSON.parse(board.getAttribute('data-events') || '[]');
@@ -271,16 +268,45 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
 
                 var boardWidth = board.clientWidth;
                 var boardHeight = board.clientHeight;
+                var boardRect = board.getBoundingClientRect();
+                var containerRect = container ? container.getBoundingClientRect() : boardRect;
                 svg.setAttribute('viewBox', '0 0 ' + boardWidth + ' ' + boardHeight);
 
-                var outerGap = Math.min(42, Math.max(20, boardWidth * 0.03));
-                var cardWidth = boardWidth < 1360 ? 260 : 280;
-                var mapWidth = Math.min(620, Math.max(460, boardWidth * 0.33));
+                var pageLeft = 0;
+                var pageRight = boardWidth;
+                var containerLeft = Math.max(pageLeft + 16, containerRect.left - boardRect.left);
+                var containerRight = Math.min(pageRight - 16, containerRect.right - boardRect.left);
+                var leftRegionLeft = pageLeft + 20;
+                var leftRegionRight = Math.max(leftRegionLeft + 140, containerLeft - 18);
+                var rightRegionLeft = Math.min(pageRight - 140, containerRight + 18);
+                var rightRegionRight = pageRight - 20;
+                var leftCardWidth = Math.max(170, Math.min(280, leftRegionRight - leftRegionLeft - 28));
+                var rightCardWidth = Math.max(170, Math.min(280, rightRegionRight - rightRegionLeft - 28));
+                var leftAxisX = Math.max(leftRegionLeft + leftCardWidth + 16, containerLeft - 24);
+                var rightAxisX = Math.min(rightRegionRight - rightCardWidth - 16, containerRight + 24);
+                if (leftAxisX >= containerLeft) {
+                    leftAxisX = containerLeft - 18;
+                }
+                if (rightAxisX <= containerRight) {
+                    rightAxisX = containerRight + 18;
+                }
+
+                cards.forEach(function(card) {
+                    if (card.getAttribute('data-side') === 'right') {
+                        card.style.width = rightCardWidth + 'px';
+                        card.style.left = (rightRegionRight - rightCardWidth) + 'px';
+                        card.style.right = 'auto';
+                    } else {
+                        card.style.width = leftCardWidth + 'px';
+                        card.style.left = leftRegionLeft + 'px';
+                        card.style.right = 'auto';
+                    }
+                });
+
+                var mapWidth = Math.min(620, Math.max(460, (containerRight - containerLeft) * 0.46));
                 var mapHeight = boardHeight - 110;
-                var mapLeft = (boardWidth - mapWidth) / 2;
+                var mapLeft = containerLeft + ((containerRight - containerLeft) - mapWidth) / 2;
                 var mapTop = 45;
-                var leftAxisX = outerGap + cardWidth + Math.max(60, (mapLeft - outerGap - cardWidth) * 0.6);
-                var rightAxisX = boardWidth - leftAxisX;
                 var axisTop = 55;
                 var axisBottom = boardHeight - 55;
 
@@ -329,17 +355,21 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                     });
                 });
 
-                var scale = Math.min(
+                var baseScale = Math.min(
                     mapRect.width / Math.max(1e-6, bounds.maxLng - bounds.minLng),
-                    mapRect.height / Math.max(1e-6, bounds.maxLat - bounds.minLat)
+                    mapRect.height / Math.max(1e-6, (bounds.maxLat - bounds.minLat) * 1.1)
                 );
-                var offsetX = mapRect.x + (mapRect.width - (bounds.maxLng - bounds.minLng) * scale) / 2;
-                var offsetY = mapRect.y + (mapRect.height - (bounds.maxLat - bounds.minLat) * scale) / 2;
+                var scaleX = baseScale;
+                var scaleY = baseScale * 1.1;
+                var projectedWidth = (bounds.maxLng - bounds.minLng) * scaleX;
+                var projectedHeight = (bounds.maxLat - bounds.minLat) * scaleY;
+                var offsetX = mapRect.x + (mapRect.width - projectedWidth) / 2;
+                var offsetY = mapRect.y + (mapRect.height - projectedHeight) / 2;
 
                 function project(lng, lat) {
                     return {
-                        x: offsetX + (lng - bounds.minLng) * scale,
-                        y: offsetY + (bounds.maxLat - lat) * scale
+                        x: offsetX + (lng - bounds.minLng) * scaleX,
+                        y: offsetY + (bounds.maxLat - lat) * scaleY
                     };
                 }
 
@@ -368,8 +398,8 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                     var marker = project(event.longitude, event.latitude);
                     var axisX = event.side === 'right' ? rightAxisX : leftAxisX;
                     var midX = event.side === 'right'
-                        ? mapRect.x + mapRect.width + Math.max(24, (axisX - (mapRect.x + mapRect.width)) * 0.42)
-                        : mapRect.x - Math.max(24, (mapRect.x - axisX) * 0.42);
+                        ? containerRight + Math.max(18, (axisX - containerRight) * 0.42)
+                        : containerLeft - Math.max(18, (containerLeft - axisX) * 0.42);
                     var axisY = event.timeline_y;
                     var axisTextX = event.side === 'right' ? axisX + 16 : axisX - 16;
                     var axisTextAnchor = event.side === 'right' ? 'start' : 'end';

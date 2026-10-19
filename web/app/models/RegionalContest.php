@@ -84,6 +84,7 @@ class RegionalContest {
     private static function normalizeRow(array $row): array {
         $dt = date_create($row['contest_time']);
         $timestamp = $dt ? $dt->getTimestamp() : time();
+        $fallbackSide = ($row['side'] ?? '') === 'right' ? 'right' : 'left';
 
         return [
             'id' => (int)$row['id'],
@@ -96,7 +97,7 @@ class RegionalContest {
             'contest_time' => (string)$row['contest_time'],
             'timestamp' => $timestamp,
             'display_time' => self::formatDisplayTime((string)$row['contest_time']),
-            'side' => ($row['side'] ?? '') === 'right' ? 'right' : 'left',
+            'side' => self::detectContestSide((string)$row['title'], $fallbackSide),
             'teams_summary' => trim((string)($row['teams_summary'] ?? '')),
             'note' => trim((string)($row['note'] ?? '')),
             'contest_url' => trim((string)($row['contest_url'] ?? '')),
@@ -208,6 +209,17 @@ class RegionalContest {
             return strtoupper($color);
         }
         return '#D9534F';
+    }
+
+    private static function detectContestSide(string $title, string $fallbackSide): string {
+        $normalizedTitle = strtoupper($title);
+        if (strpos($normalizedTitle, 'ICPC') !== false) {
+            return 'left';
+        }
+        if (strpos($normalizedTitle, 'CCPC') !== false) {
+            return 'right';
+        }
+        return $fallbackSide;
     }
 
     private static function positionToY(float $positionPct, int $boardHeight): float {
