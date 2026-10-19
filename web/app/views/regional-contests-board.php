@@ -34,35 +34,34 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
     overflow-x: auto;
-    padding: 8px 0 10px;
+    padding: 0 0 10px;
 }
 .regional-contests-board {
     position: relative;
-    width: 100vw;
+    width: max(2000px, 100vw);
     height: <?= (int)$regionalContestsBoardHeight ?>px;
-    min-height: 560px;
-    overflow: hidden;
-    background:
-        radial-gradient(circle at 50% 0, rgba(217, 83, 79, 0.08), transparent 36%),
-        linear-gradient(180deg, #fbfcfe 0%, #f5f8fc 100%);
+    min-height: 760px;
+    overflow: visible;
+    background: transparent;
 }
 .regional-contests-board-svg {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
+    overflow: visible;
 }
 .regional-contests-card {
     position: absolute;
-    width: 260px;
-    max-height: 190px;
+    width: 280px;
+    max-height: 220px;
     overflow: auto;
     padding: 12px 14px;
     border: 1px solid #dfe7f0;
     border-left-width: 4px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.97);
-    box-shadow: 0 10px 24px rgba(29, 52, 84, 0.08);
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 14px 30px rgba(29, 52, 84, 0.10);
 }
 .regional-contests-card-left {
     left: 24px;
@@ -139,7 +138,7 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
 
                 <?php foreach ($regionalContests as $event): ?>
                     <?php
-                    $top = max(24, min($regionalContestsBoardHeight - 164, round(60 + ($regionalContestsBoardHeight - 120) * $event['position_pct'] / 100 + 18)));
+                    $top = max(8, min($regionalContestsBoardHeight - 210, round(20 + ($regionalContestsBoardHeight - 40) * $event['position_pct'] / 100 + 14)));
                     $cardClass = $event['side'] === 'right' ? 'regional-contests-card regional-contests-card-right' : 'regional-contests-card regional-contests-card-left';
                     $location = $event['city_name'];
                     if ($event['province_name'] !== '') {
@@ -165,7 +164,7 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                 <?php endforeach ?>
             </div>
         </div>
-        <div class="regional-contests-legend">以页面中央 container 的左右边界为界，地图在中间，时间轴与信息牌落在两侧留白。</div>
+        <div class="regional-contests-legend">地图直接放大铺在中间区域，时间轴与信息牌沿 container 外侧留白上下展开，不再依赖整块大底。</div>
         <script>
         (function() {
             var board = document.getElementById(<?= json_encode($regionalContestsBoardId) ?>);
@@ -272,43 +271,40 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                 var containerRect = container ? container.getBoundingClientRect() : boardRect;
                 svg.setAttribute('viewBox', '0 0 ' + boardWidth + ' ' + boardHeight);
 
+                var viewportWidth = window.innerWidth || boardWidth;
+                var extraWidth = boardWidth - viewportWidth;
+                var boardCenterOffset = extraWidth / 2;
                 var pageLeft = 0;
                 var pageRight = boardWidth;
-                var containerLeft = Math.max(pageLeft + 16, containerRect.left - boardRect.left);
-                var containerRight = Math.min(pageRight - 16, containerRect.right - boardRect.left);
-                var leftRegionLeft = pageLeft + 20;
-                var leftRegionRight = Math.max(leftRegionLeft + 140, containerLeft - 18);
-                var rightRegionLeft = Math.min(pageRight - 140, containerRight + 18);
-                var rightRegionRight = pageRight - 20;
-                var leftCardWidth = Math.max(170, Math.min(280, leftRegionRight - leftRegionLeft - 28));
-                var rightCardWidth = Math.max(170, Math.min(280, rightRegionRight - rightRegionLeft - 28));
-                var leftAxisX = Math.max(leftRegionLeft + leftCardWidth + 16, containerLeft - 24);
-                var rightAxisX = Math.min(rightRegionRight - rightCardWidth - 16, containerRight + 24);
-                if (leftAxisX >= containerLeft) {
-                    leftAxisX = containerLeft - 18;
-                }
-                if (rightAxisX <= containerRight) {
-                    rightAxisX = containerRight + 18;
-                }
+                var containerLeft = Math.max(pageLeft + 16, boardCenterOffset + (containerRect.left - boardRect.left));
+                var containerRight = Math.min(pageRight - 16, boardCenterOffset + (containerRect.right - boardRect.left));
+                var leftAxisX = Math.max(110, containerLeft - 46);
+                var rightAxisX = Math.min(boardWidth - 110, containerRight + 46);
+                var leftRegionLeft = 30;
+                var leftRegionRight = leftAxisX - 22;
+                var rightRegionLeft = rightAxisX + 22;
+                var rightRegionRight = boardWidth - 30;
+                var leftCardWidth = Math.min(320, Math.max(140, leftRegionRight - leftRegionLeft));
+                var rightCardWidth = Math.min(320, Math.max(140, rightRegionRight - rightRegionLeft));
 
                 cards.forEach(function(card) {
                     if (card.getAttribute('data-side') === 'right') {
                         card.style.width = rightCardWidth + 'px';
-                        card.style.left = (rightRegionRight - rightCardWidth) + 'px';
+                        card.style.left = rightRegionLeft + 'px';
                         card.style.right = 'auto';
                     } else {
                         card.style.width = leftCardWidth + 'px';
-                        card.style.left = leftRegionLeft + 'px';
+                        card.style.left = (leftRegionRight - leftCardWidth) + 'px';
                         card.style.right = 'auto';
                     }
                 });
 
-                var mapWidth = Math.min(620, Math.max(460, (containerRight - containerLeft) * 0.46));
-                var mapHeight = boardHeight - 110;
+                var mapWidth = Math.min(1180, Math.max(880, (containerRight - containerLeft) * 0.95));
+                var mapHeight = boardHeight - 20;
                 var mapLeft = containerLeft + ((containerRight - containerLeft) - mapWidth) / 2;
-                var mapTop = 45;
-                var axisTop = 55;
-                var axisBottom = boardHeight - 55;
+                var mapTop = 8;
+                var axisTop = 14;
+                var axisBottom = boardHeight - 14;
 
                 var leftAxisLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                 leftAxisLine.setAttribute('x1', leftAxisX.toFixed(2));
@@ -388,7 +384,8 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                         path.setAttribute('d', d);
                         path.setAttribute('fill', 'url(#' + <?= json_encode($regionalContestsBoardId) ?> + '-map-fill)');
                         path.setAttribute('stroke', '#95ADD1');
-                        path.setAttribute('stroke-width', '1.2');
+                        path.setAttribute('stroke-width', '1.6');
+                        path.setAttribute('opacity', '0.98');
                         mapLayer.appendChild(path);
                     });
                 });
@@ -398,8 +395,8 @@ $regionalContestsMapUrl = HTML::url('/data/china-map.geojson');
                     var marker = project(event.longitude, event.latitude);
                     var axisX = event.side === 'right' ? rightAxisX : leftAxisX;
                     var midX = event.side === 'right'
-                        ? containerRight + Math.max(18, (axisX - containerRight) * 0.42)
-                        : containerLeft - Math.max(18, (containerLeft - axisX) * 0.42);
+                        ? containerRight + Math.max(20, (axisX - containerRight) * 0.55)
+                        : containerLeft - Math.max(20, (containerLeft - axisX) * 0.55);
                     var axisY = event.timeline_y;
                     var axisTextX = event.side === 'right' ? axisX + 16 : axisX - 16;
                     var axisTextAnchor = event.side === 'right' ? 'start' : 'end';

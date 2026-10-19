@@ -45,7 +45,7 @@ class RegionalContest {
 
     public static function recommendBoardHeight(array $events): int {
         if (empty($events)) {
-            return 560;
+            return 760;
         }
 
         $leftCount = 0;
@@ -59,7 +59,7 @@ class RegionalContest {
         }
 
         $dominant = max($leftCount, $rightCount);
-        return max(560, min(980, 420 + max(0, $dominant - 2) * 110));
+        return max(760, min(1280, 620 + max(0, $dominant - 2) * 150));
     }
 
     public static function buildClientPayload(array $events, int $boardHeight): array {
@@ -151,8 +151,8 @@ class RegionalContest {
             return $a['id'] <=> $b['id'];
         });
 
-        $lower = 12.0;
-        $upper = 88.0;
+        $lower = 4.0;
+        $upper = 96.0;
         $span = $upper - $lower;
         $positions = [];
 
@@ -223,8 +223,8 @@ class RegionalContest {
     }
 
     private static function positionToY(float $positionPct, int $boardHeight): float {
-        $top = 60;
-        $bottom = 60;
+        $top = 20;
+        $bottom = 20;
         $usableHeight = max(1, $boardHeight - $top - $bottom);
         return round($top + $usableHeight * $positionPct / 100, 2);
     }
