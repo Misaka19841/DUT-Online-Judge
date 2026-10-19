@@ -58,36 +58,9 @@ $deepseekSelectedSkill = isset($_GET['skill']) ? trim($_GET['skill']) : '';
                 <li><a href="<?= HTML::url('/blogs') ?>"><?= UOJLocale::get('blogs') ?></a></li>
 		<li><a href="<?= HTML::url('/faq') ?>"><?= UOJLocale::get('help') ?></a></li>
                 <li><a href="/regional-contests">区域赛</a></li>
-		<li class="dropdown"><a href="javascript:void(0)">赛时可参考内容</a>
-		    <ul class="dropdown-submenu" style="list-style: none; padding-left: 0;">
-			<li style="padding: 0; margin: 0;">
-			    <a href="/cppr/reference/zh/cpp.html" style="display: block; padding: 8px 20px; width: 100%;">C++ 参考手册</a>
-			</li>
-		    </ul>
-		</li>
+                <li><a href="/toolbox">工具箱</a></li>
 
 	</ul>
-	<style>
-	.navbar-nav > li.dropdown { position: relative; }
-	.navbar-nav > li.dropdown .dropdown-submenu {
-		display: none;
-		position: absolute;
-		top: 100%;
-		left: 0;
-		background: #fff;
-		border: 1px solid #ddd;
-		min-width: 140px;
-		box-shadow: 0 6px 12px rgba(0,0,0,.175);
-	}
-	.navbar-nav > li.dropdown:hover .dropdown-submenu { display: block; }
-	.navbar-nav > li.dropdown .dropdown-submenu li a {
-		white-space: nowrap;
-		padding: 8px 15px;
-		color: #333;
-	}
-	.navbar-nav > li.dropdown .dropdown-submenu li a:hover { background-color: #f5f5f5; }
-	</style>
-
         </div><!--/.nav-collapse -->
     </div>
 </div>

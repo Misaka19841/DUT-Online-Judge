@@ -78,6 +78,7 @@ Route::group([
 		Route::any('/faq', '/faq.php');
 		Route::any('/ranklist', '/ranklist.php?type=active-users-rating');
 		Route::any('/ranklist/all-users', '/ranklist.php?type=rating');
+                Route::any('/toolbox', '/toolbox.php');
                 Route::any('/regional-contests', '/regional_contests.php');
 		Route::any('/hall-of-fame','/hof.php');	
 		Route::any('/login', '/login.php');
