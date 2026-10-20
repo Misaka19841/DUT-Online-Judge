@@ -135,6 +135,204 @@ class UOJProblemBatchManager {
         $problem->info['is_hidden'] = $is_hidden ? 1 : 0;
     }
 
+    public static function getCurrentMaxProblemId(): int {
+        $row = DB::selectFirst([
+            "select max(id) as max_id from problems"
+        ]);
+        if (!$row || $row['max_id'] === null) {
+            return 0;
+        }
+        return (int)$row['max_id'];
+    }
+
+    public static function deleteProblemTailFrom($first_delete_id): array {
+        $first_delete_id = self::normalizeUIntLike($first_delete_id);
+        if ($first_delete_id === null || !validateUInt($first_delete_id) || (int)$first_delete_id < 1) {
+            throw new Exception('起始题号必须是正整数');
+        }
+
+        $current_max_id = self::getCurrentMaxProblemId();
+        $next_problem_id = (int)$first_delete_id;
+        if ($current_max_id === 0) {
+            DB::query("alter table problems auto_increment = {$next_problem_id}");
+            return [
+                'deleted_ids' => [],
+                'deleted_count' => 0,
+                'next_problem_id' => $next_problem_id,
+                'old_max_problem_id' => 0
+            ];
+        }
+        if ($next_problem_id > $current_max_id + 1) {
+            throw new Exception("当前最大题号是 {$current_max_id}，不能回滚到 {$next_problem_id}");
+        }
+
+        $deleted_ids = [];
+        for ($id = $next_problem_id; $id <= $current_max_id; $id++) {
+            $deleted_ids[] = (string)$id;
+        }
+
+        if ($deleted_ids) {
+            $contest_refs = DB::selectAll([
+                "select contest_id, problem_id from contests_problems",
+                "where", [
+                    ['problem_id', 'in', DB::rawtuple($deleted_ids)]
+                ],
+                "order by problem_id asc, contest_id asc"
+            ]);
+            if ($contest_refs) {
+                $first_ref = $contest_refs[0];
+                throw new Exception("题目 #{$first_ref['problem_id']} 仍在比赛 #{$first_ref['contest_id']} 中，不能删除");
+            }
+        }
+
+        $submission_ids = [];
+        $submission_files = [];
+        if ($deleted_ids) {
+            $submissions = DB::selectAll([
+                "select id, content from submissions",
+                "where", [
+                    ['problem_id', 'in', DB::rawtuple($deleted_ids)]
+                ]
+            ]);
+            foreach ($submissions as $submission) {
+                $submission_ids[] = (string)$submission['id'];
+                $content = json_decode($submission['content'], true);
+                if (isset($content['file_name']) && is_string($content['file_name'])) {
+                    $submission_files[] = $content['file_name'];
+                }
+            }
+
+            $custom_test_submissions = DB::selectAll([
+                "select content from custom_test_submissions",
+                "where", [
+                    ['problem_id', 'in', DB::rawtuple($deleted_ids)]
+                ]
+            ]);
+            foreach ($custom_test_submissions as $submission) {
+                $content = json_decode($submission['content'], true);
+                if (isset($content['file_name']) && is_string($content['file_name'])) {
+                    $submission_files[] = $content['file_name'];
+                }
+            }
+
+            $hacks = DB::selectAll([
+                "select input from hacks",
+                "where", [
+                    ['problem_id', 'in', DB::rawtuple($deleted_ids)]
+                ]
+            ]);
+            foreach ($hacks as $hack) {
+                if (isset($hack['input']) && is_string($hack['input'])) {
+                    $submission_files[] = $hack['input'];
+                }
+            }
+        }
+
+        DB::transaction(function() use ($deleted_ids, $submission_ids) {
+            if ($submission_ids) {
+                DB::delete([
+                    "delete from submissions_history",
+                    "where", [
+                        ['submission_id', 'in', DB::rawtuple($submission_ids)]
+                    ]
+                ]);
+            }
+            if ($deleted_ids) {
+                DB::delete([
+                    "delete from click_zans",
+                    "where", [
+                        'type' => 'P',
+                        ['target_id', 'in', DB::rawtuple($deleted_ids)]
+                    ]
+                ]);
+                DB::delete([
+                    "delete from system_updates",
+                    "where", [
+                        'type' => 'problem',
+                        ['target_id', 'in', DB::rawtuple($deleted_ids)]
+                    ]
+                ]);
+                DB::delete([
+                    "delete from system_updates",
+                    "where", [
+                        'type' => 'problem_internally',
+                        ['target_id', 'in', DB::rawtuple($deleted_ids)]
+                    ]
+                ]);
+                DB::delete([
+                    "delete from submissions",
+                    "where", [
+                        ['problem_id', 'in', DB::rawtuple($deleted_ids)]
+                    ]
+                ]);
+                DB::delete([
+                    "delete from custom_test_submissions",
+                    "where", [
+                        ['problem_id', 'in', DB::rawtuple($deleted_ids)]
+                    ]
+                ]);
+                DB::delete([
+                    "delete from hacks",
+                    "where", [
+                        ['problem_id', 'in', DB::rawtuple($deleted_ids)]
+                    ]
+                ]);
+                DB::delete([
+                    "delete from best_ac_submissions",
+                    "where", [
+                        ['problem_id', 'in', DB::rawtuple($deleted_ids)]
+                    ]
+                ]);
+                DB::delete([
+                    "delete from problems_permissions",
+                    "where", [
+                        ['problem_id', 'in', DB::rawtuple($deleted_ids)]
+                    ]
+                ]);
+                DB::delete([
+                    "delete from problems_tags",
+                    "where", [
+                        ['problem_id', 'in', DB::rawtuple($deleted_ids)]
+                    ]
+                ]);
+                DB::delete([
+                    "delete from problems_contents",
+                    "where", [
+                        ['id', 'in', DB::rawtuple($deleted_ids)]
+                    ]
+                ]);
+                DB::delete([
+                    "delete from problems",
+                    "where", [
+                        ['id', 'in', DB::rawtuple($deleted_ids)]
+                    ]
+                ]);
+            }
+        });
+
+        $storage_path = UOJContext::storagePath();
+        foreach (array_unique($submission_files) as $file_name) {
+            if ($file_name !== '') {
+                @unlink($storage_path . $file_name);
+            }
+        }
+
+        foreach ($deleted_ids as $id) {
+            UOJLocalRun::exec(['rm', '-rf', "/var/svn/problem/{$id}"]);
+            UOJLocalRun::exec(['rm', '-rf', "/var/uoj_data/{$id}"]);
+            UOJLocalRun::exec(['rm', '-f', "/var/uoj_data/{$id}.zip"]);
+        }
+
+        DB::query("alter table problems auto_increment = {$next_problem_id}");
+
+        return [
+            'deleted_ids' => $deleted_ids,
+            'deleted_count' => count($deleted_ids),
+            'next_problem_id' => $next_problem_id,
+            'old_max_problem_id' => $current_max_id
+        ];
+    }
+
     public static function exportToArchive(array $ids): array {
         $zip_relative_path = FS::randomAvailableTmpFileName() . '.zip';
         $zip_full_path = UOJContext::storagePath() . $zip_relative_path;

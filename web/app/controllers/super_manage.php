@@ -488,6 +488,32 @@ $problem_batch_visibility_form->handle = function() {
 };
 $problem_batch_visibility_form->runAtServer();
 
+$problem_tail_delete_form = new UOJForm('problem_tail_delete');
+$problem_tail_delete_form->addInput('first_delete_problem_id', 'text', '下一道题号 x', '', function($x, &$vdata) {
+        if (!validateUInt($x) || (int)$x < 1) {
+                return 'x 必须是正整数';
+        }
+        $vdata['first_delete_problem_id'] = (int)$x;
+        return '';
+}, null);
+$problem_tail_delete_form->submit_button_config['text'] = '删除尾部题目并回滚题号';
+$problem_tail_delete_form->submit_button_config['class_str'] = 'btn btn-danger';
+$problem_tail_delete_form->submit_button_config['smart_confirm'] = '';
+$problem_tail_delete_form->handle = function(&$vdata) {
+        $res = UOJProblemBatchManager::deleteProblemTailFrom($vdata['first_delete_problem_id']);
+        $success = [];
+        if ($res['deleted_ids']) {
+                $first_id = $res['deleted_ids'][0];
+                $last_id = $res['deleted_ids'][count($res['deleted_ids']) - 1];
+                $success[] = "已删除题目区间 #{$first_id} ~ #{$last_id}，共 {$res['deleted_count']} 题";
+        } else {
+                $success[] = '没有题目需要删除';
+        }
+        $success[] = "下次新建题目的题号将从 #{$res['next_problem_id']} 开始";
+        UOJResponse::message(super_manage_render_batch_report('尾部题目回滚完成', $success, []));
+};
+$problem_tail_delete_form->runAtServer();
+
 $safemode_notice = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['form_safemode'])) {
@@ -528,6 +554,7 @@ $safemode_codes = contest_security_mode_get_codes(true);
 $safemode_code_lines = implode("\n", array_map(function($row) {
         return contest_security_mode_display_login_code($row['code']);
 }, $safemode_codes));
+$current_max_problem_id = UOJProblemBatchManager::getCurrentMaxProblemId();
 
 $cur_tab = isset($_GET['tab']) ? $_GET['tab'] : 'users';
 
@@ -704,6 +731,16 @@ requireLib('morris');
                                 <div class="panel-body">
                                         <p>批量公开时会沿用现有规则：若题目仍处于未结束比赛中，则不会被公开。</p>
                                         <?php $problem_batch_visibility_form->printHTML(); ?>
+                                </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                                <div class="panel-heading">删除尾部题目并回滚题号</div>
+                                <div class="panel-body">
+                                        <p>当前最大题号：<code><?= $current_max_problem_id ?></code>。</p>
+                                        <p>输入 <code>x</code> 后，将删除所有题号 <code>&gt;= x</code> 的题目，并把 <code>problems</code> 的自增值重置为 <code>x</code>，使得下次新建题目就是 <code>#x</code>。</p>
+                                        <p>此操作只适合回滚最近批量导入出来的尾部题目；若目标题目仍在比赛中，系统会直接拒绝删除。</p>
+                                        <?php $problem_tail_delete_form->printHTML(); ?>
                                 </div>
                         </div>
 		<?php elseif ($cur_tab === 'submissions'): ?>
