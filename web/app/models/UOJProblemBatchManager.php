@@ -716,7 +716,7 @@ class UOJProblemBatchManager {
             DB::bracketed_fields(array_keys($info)),
             "values", DB::tuple(array_values($info))
         ]);
-        $id = DB::insert_id();
+        $id = (string)DB::insert_id();
         DB::insert([
             "insert into problems_contents",
             "(id, statement, statement_md)",
