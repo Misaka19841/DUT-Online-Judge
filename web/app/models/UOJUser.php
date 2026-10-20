@@ -47,6 +47,9 @@ class UOJUser {
 	
 	public static function register($user) {
 		UOJUser::checkBasicInfo($user);
+                if (!validateQQEmail($user['email'])) {
+                        throw new UOJInvalidArgumentException('注册仅支持 QQ 邮箱（xxx@qq.com）');
+                }
 		
 		$password = getPasswordToStore($user['password'], $user['username']);
 		
