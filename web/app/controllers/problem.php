@@ -284,6 +284,7 @@ requireLib('shjs');
 <span class="pull-right">
     <a role="button" class="btn btn-primary" href="<?= UOJProblem::cur()->getAttachmentUri() ?>"><span class="glyphicon glyphicon-download-alt"></span> <?= UOJLocale::get('problems::download attachment') ?></a>
 	<?php if (UOJContest::cur()->userCanSeeProblemStatistics(Auth::user())): ?>
+                <a role="button" class="btn btn-primary" href="<?= UOJProblem::cur()->getUri('/statistics') ?>"><span class="glyphicon glyphicon-stats"></span> <?= UOJLocale::get('problems::statistics') ?></a>
 		<a role="button" class="btn btn-info" href="/blog/search?tag=sol=<?= $problem['id'] ?>"><span class="glyphicon glyphicon-stats"></span> <?= UOJLocale::get('problems::solution') ?></a>
 	<?php endif ?>
 </span>
@@ -296,6 +297,7 @@ $('#contest-countdown').countdown(<?= UOJContest::info('end_time')->getTimestamp
 <h1 class="page-header text-center">#<?= $problem['id']?>. <?= $problem['title'] ?></h1>
 <span class="pull-right">
     <a role="button" class="btn btn-primary" href="<?= UOJProblem::cur()->getAttachmentUri() ?>"><span class="glyphicon glyphicon-download-alt"></span> <?= UOJLocale::get('problems::download attachment') ?></a>
+        <a role="button" class="btn btn-primary" href="<?= UOJProblem::cur()->getUri('/statistics') ?>"><span class="glyphicon glyphicon-stats"></span> <?= UOJLocale::get('problems::statistics') ?></a>
 	<a role="button" class="btn btn-info" href="/blog/search?tag=sol=<?= $problem['id'] ?>"><span class="glyphicon glyphicon-stats"></span> <?= UOJLocale::get('problems::solution') ?></a>
 </span>
 <?php endif ?>
