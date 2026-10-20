@@ -63,6 +63,7 @@ Route::group([
         Route::any('/contest/{contest_id}/problem/{id}/statistics', '/problem_statistics.php');
 		Route::any('/download/contest/{id}/result.json', '/download.php?type=contest');
 		Route::any('/dut-deepseek-answer', '/deepseek.php');	
+                Route::any('/api/submissions/{username}', '/user_submissions_api.php');
 		Route::any('/submissions', '/submissions_list.php');
 		Route::any('/submission/{id}', '/submission.php');
 		Route::any('/submission-status-details', '/submission_status_details.php');
