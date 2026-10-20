@@ -138,6 +138,7 @@ class UOJProblemBatchManager {
     public static function exportToArchive(array $ids): array {
         $zip_relative_path = FS::randomAvailableTmpFileName() . '.zip';
         $zip_full_path = UOJContext::storagePath() . $zip_relative_path;
+        $inner_zip_paths = [];
 
         $zip = new ZipArchive();
         if ($zip->open($zip_full_path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
@@ -152,20 +153,23 @@ class UOJProblemBatchManager {
                     throw new Exception("题目 #{$id} 不存在");
                 }
                 $inner_zip_path = self::createSingleProblemPackageArchive($problem);
-                try {
-                    $entry_name = sprintf('problem_%03d.zip', $index);
-                    if (!$zip->addFile($inner_zip_path, $entry_name)) {
-                        throw new Exception("写入题目 #{$id} 的导出包失败");
-                    }
-                } finally {
+                $entry_name = sprintf('problem_%03d.zip', $index);
+                if (!$zip->addFile($inner_zip_path, $entry_name)) {
                     if (is_file($inner_zip_path)) {
                         unlink($inner_zip_path);
                     }
+                    throw new Exception("写入题目 #{$id} 的导出包失败");
                 }
+                $inner_zip_paths[] = $inner_zip_path;
                 $index++;
             }
         } catch (Exception $e) {
             $zip->close();
+            foreach ($inner_zip_paths as $inner_zip_path) {
+                if (is_file($inner_zip_path)) {
+                    unlink($inner_zip_path);
+                }
+            }
             if (is_file($zip_full_path)) {
                 unlink($zip_full_path);
             }
@@ -173,10 +177,21 @@ class UOJProblemBatchManager {
         }
 
         if (!$zip->close()) {
+            foreach ($inner_zip_paths as $inner_zip_path) {
+                if (is_file($inner_zip_path)) {
+                    unlink($inner_zip_path);
+                }
+            }
             if (is_file($zip_full_path)) {
                 unlink($zip_full_path);
             }
             throw new Exception('关闭导出压缩包失败');
+        }
+
+        foreach ($inner_zip_paths as $inner_zip_path) {
+            if (is_file($inner_zip_path)) {
+                unlink($inner_zip_path);
+            }
         }
 
         return [
