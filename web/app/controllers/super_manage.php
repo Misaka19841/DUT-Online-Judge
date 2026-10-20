@@ -488,6 +488,7 @@ $problem_batch_visibility_form->handle = function() {
 };
 $problem_batch_visibility_form->runAtServer();
 
+$can_use_problem_tail_delete = Auth::id() === 'admin';
 $problem_tail_delete_form = new UOJForm('problem_tail_delete');
 $problem_tail_delete_form->addInput('first_delete_problem_id', 'text', '下一道题号 x', '', function($x, &$vdata) {
         if (!validateUInt($x) || (int)$x < 1) {
@@ -500,6 +501,10 @@ $problem_tail_delete_form->submit_button_config['text'] = '删除尾部题目并
 $problem_tail_delete_form->submit_button_config['class_str'] = 'btn btn-danger';
 $problem_tail_delete_form->submit_button_config['smart_confirm'] = '';
 $problem_tail_delete_form->handle = function(&$vdata) {
+        global $can_use_problem_tail_delete;
+        if (!$can_use_problem_tail_delete) {
+                UOJResponse::page403();
+        }
         $res = UOJProblemBatchManager::deleteProblemTailFrom($vdata['first_delete_problem_id']);
         $success = [];
         if ($res['deleted_ids']) {
@@ -734,6 +739,7 @@ requireLib('morris');
                                 </div>
                         </div>
 
+                        <?php if ($can_use_problem_tail_delete): ?>
                         <div class="panel panel-default">
                                 <div class="panel-heading">删除尾部题目并回滚题号</div>
                                 <div class="panel-body">
@@ -743,6 +749,7 @@ requireLib('morris');
                                         <?php $problem_tail_delete_form->printHTML(); ?>
                                 </div>
                         </div>
+                        <?php endif ?>
 		<?php elseif ($cur_tab === 'submissions'): ?>
 			<div>
 				<h4>删除赛前提交记录</h4>
