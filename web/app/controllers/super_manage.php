@@ -383,6 +383,17 @@ function super_manage_render_batch_report(string $title, array $success, array $
         return $html;
 }
 
+function super_manage_format_bytes($size): string {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $size = max(0, (float)$size);
+        $idx = 0;
+        while ($size >= 1024 && $idx + 1 < count($units)) {
+                $size /= 1024;
+                $idx++;
+        }
+        return number_format($size, $idx === 0 ? 0 : 2) . ' ' . $units[$idx];
+}
+
 if (isset($_POST['problem_import_submit'])) {
         crsf_defend();
 
@@ -519,6 +530,54 @@ $problem_tail_delete_form->handle = function(&$vdata) {
 };
 $problem_tail_delete_form->runAtServer();
 
+$can_manage_database_backup = Auth::id() === 'admin';
+$database_backups = $can_manage_database_backup ? UOJDatabaseBackup::listBackups() : [];
+$database_backup_options = [];
+foreach ($database_backups as $item) {
+        $database_backup_options[$item['name']] = $item['name'];
+}
+
+$database_backup_create_form = new UOJForm('database_backup_create');
+$database_backup_create_form->submit_button_config['text'] = '创建并下载数据库备份';
+$database_backup_create_form->submit_button_config['class_str'] = 'btn btn-primary';
+$database_backup_create_form->handle = function() use ($can_manage_database_backup) {
+        if (!$can_manage_database_backup) {
+                UOJResponse::page403();
+        }
+        $res = UOJDatabaseBackup::createBackup();
+        UOJResponse::xsendfile($res['path'], [
+                'mimetype' => 'application/sql',
+                'attachment' => $res['download_name']
+        ]);
+};
+$database_backup_create_form->runAtServer();
+
+$database_restore_form = new UOJForm('database_restore');
+$database_restore_form->addSelect('backup_name', $database_backup_options ?: ['' => '暂无可用备份'], '服务器备份', '');
+$database_restore_form->extra_validator = function() use ($database_backup_options) {
+        return $database_backup_options ? '' : '当前没有可用于恢复的服务器备份';
+};
+$database_restore_form->submit_button_config['text'] = '用所选备份恢复数据库';
+$database_restore_form->submit_button_config['class_str'] = 'btn btn-danger';
+$database_restore_form->submit_button_config['confirm_text'] = '你真的要用所选备份覆盖当前数据库吗？系统会先自动创建一份恢复前备份。';
+$database_restore_form->handle = function() use ($can_manage_database_backup, $database_backup_options) {
+        if (!$can_manage_database_backup) {
+                UOJResponse::page403();
+        }
+        $backup_name = UOJRequest::post('backup_name');
+        if (!isset($database_backup_options[$backup_name])) {
+                UOJResponse::message('请选择有效的备份文件');
+        }
+        $res = UOJDatabaseBackup::restoreFromBackupName($backup_name, true);
+        $msg = '<h3>数据库恢复完成</h3>';
+        $msg .= '<p>已从 <code>' . HTML::escape($res['source_name']) . '</code> 恢复当前数据库。</p>';
+        if ($res['safety_backup']) {
+                $msg .= '<p>恢复前自动备份：<code>' . HTML::escape($res['safety_backup']['download_name']) . '</code></p>';
+        }
+        UOJResponse::message($msg);
+};
+$database_restore_form->runAtServer();
+
 $safemode_notice = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['form_safemode'])) {
@@ -560,8 +619,23 @@ $safemode_code_lines = implode("\n", array_map(function($row) {
         return contest_security_mode_display_login_code($row['code']);
 }, $safemode_codes));
 $current_max_problem_id = UOJProblemBatchManager::getCurrentMaxProblemId();
+$db_cli_path = UOJContext::documentRoot() . '/app/db_cli.php';
 
 $cur_tab = isset($_GET['tab']) ? $_GET['tab'] : 'users';
+if ($cur_tab === 'database' && !$can_manage_database_backup) {
+        UOJResponse::page403();
+}
+if ($can_manage_database_backup && isset($_GET['download-db-backup'])) {
+        try {
+                $path = UOJDatabaseBackup::resolveBackupPath($_GET['download-db-backup']);
+                UOJResponse::xsendfile($path, [
+                        'mimetype' => 'application/sql',
+                        'attachment' => basename($path)
+                ]);
+        } catch (Exception $e) {
+                UOJResponse::message('下载失败：' . HTML::escape($e->getMessage()));
+        }
+}
 
 $tabs_info = [
 	'users' => [
@@ -576,6 +650,10 @@ $tabs_info = [
 		'name' => '博客管理',
 		'url' => "/super-manage/blogs"
 	],
+        'database' => [
+                'name' => '数据库',
+                'url' => '/super-manage/database'
+        ],
         'problems' => [
                 'name' => '题目批量',
                 'url' => '/super-manage/problems'
@@ -606,6 +684,9 @@ $tabs_info = [
 		'url' => '/super-manage/meta'
 	]
 ];
+if (!$can_manage_database_backup) {
+        unset($tabs_info['database']);
+}
 
 //isset($tabs_info[$cur_tab]) || UOJResponse::page404();
 
@@ -689,6 +770,65 @@ requireLib('morris');
 				<h4>隐藏评论</h4>
 				<?php $comment_hider->printHTML(); ?>
 			</div>
+                <?php elseif ($cur_tab === 'database'): ?>
+                        <div class="panel panel-default">
+                                <div class="panel-heading">创建备份</div>
+                                <div class="panel-body">
+                                        <p>这里导出的是完整数据库 SQL，包含表结构、数据、触发器、事件和存储过程，可用于整站数据库恢复。</p>
+                                        <p>每次点击都会先在服务器 <code>app/storage/db-backup</code> 下保留一份，再把同一个文件直接下载给你。</p>
+                                        <?php $database_backup_create_form->printHTML(); ?>
+                                </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                                <div class="panel-heading">从服务器备份恢复</div>
+                                <div class="panel-body">
+                                        <p>恢复前系统会自动再打一份“恢复前备份”。这个操作会覆盖当前数据库内容，只建议在 <code>admin</code> 账号下执行。</p>
+                                        <?php $database_restore_form->printHTML(); ?>
+                                </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                                <div class="panel-heading">服务器现有备份</div>
+                                <div class="panel-body">
+                                        <?php if ($database_backups): ?>
+                                                <table class="table table-bordered table-hover">
+                                                        <thead>
+                                                                <tr>
+                                                                        <th>文件名</th>
+                                                                        <th>大小</th>
+                                                                        <th>时间</th>
+                                                                        <th>操作</th>
+                                                                </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <?php foreach ($database_backups as $item): ?>
+                                                                <tr>
+                                                                        <td><code><?= HTML::escape($item['name']) ?></code></td>
+                                                                        <td><?= super_manage_format_bytes($item['size']) ?></td>
+                                                                        <td><?= date('Y-m-d H:i:s', $item['mtime']) ?></td>
+                                                                        <td><a href="/super-manage/database?download-db-backup=<?= urlencode($item['name']) ?>">下载</a></td>
+                                                                </tr>
+                                                        <?php endforeach ?>
+                                                        </tbody>
+                                                </table>
+                                        <?php else: ?>
+                                                <p>当前还没有服务器备份。</p>
+                                        <?php endif ?>
+                                </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                                <div class="panel-heading">命令行恢复</div>
+                                <div class="panel-body">
+                                        <p>如果数据库已经空了、网站起不来，可以直接在服务器上运行下面这组命令：</p>
+
+<pre>php <?= HTML::escape($db_cli_path) ?> backup
+php <?= HTML::escape($db_cli_path) ?> list
+php <?= HTML::escape($db_cli_path) ?> restore /path/to/backup.sql</pre>
+                                        <p>其中 <code>restore</code> 会直接执行整库恢复，不依赖网站先连上数据库。</p>
+                                </div>
+                        </div>
                 <?php elseif ($cur_tab === 'problems'): ?>
                         <div class="panel panel-default">
                                 <div class="panel-heading">题目导出</div>
