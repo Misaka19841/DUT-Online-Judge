@@ -7,9 +7,9 @@ require __DIR__ . '/models/UOJConfig.php';
 
 function dbCliHelp() {
         echo "DOJ Database CLI\n";
-        echo "php db_cli.php backup [output.sql]\n";
-        echo "php db_cli.php restore <input.sql>\n";
-        echo "php db_cli.php list\n";
+        echo "php db_cli.php backup <main|acm_game> [output.sql]\n";
+        echo "php db_cli.php restore <main|acm_game> <input.sql>\n";
+        echo "php db_cli.php list [main|acm_game|all]\n";
 }
 
 if ($argc <= 1) {
@@ -21,23 +21,34 @@ $cmd = $argv[1];
 
 try {
         if ($cmd === 'backup') {
-                $target = $argc >= 3 ? $argv[2] : null;
-                $res = UOJDatabaseBackup::createBackup($target);
-                echo $res['path'] . "\n";
-                exit(0);
-        }
-        if ($cmd === 'restore') {
                 if ($argc < 3) {
                         dbCliHelp();
                         exit(1);
                 }
-                $res = UOJDatabaseBackup::restoreFromFile($argv[2], false);
-                echo "restored from " . $res['source_path'] . "\n";
+                $target = $argv[2];
+                $output = $argc >= 4 ? $argv[3] : null;
+                $res = UOJDatabaseBackup::createBackup($target, $output);
+                echo $res['path'] . "\n";
+                exit(0);
+        }
+        if ($cmd === 'restore') {
+                if ($argc < 4) {
+                        dbCliHelp();
+                        exit(1);
+                }
+                $res = UOJDatabaseBackup::restoreFromFile($argv[2], $argv[3], false);
+                echo "restored {$res['target']} from " . $res['source_path'] . "\n";
                 exit(0);
         }
         if ($cmd === 'list') {
-                foreach (UOJDatabaseBackup::listBackups() as $item) {
-                        echo $item['name'] . "\t" . $item['size'] . "\t" . date('Y-m-d H:i:s', $item['mtime']) . "\n";
+                $target = $argc >= 3 ? $argv[2] : 'all';
+                $targets = $target === 'all'
+                        ? array_keys(UOJDatabaseBackup::getTargets())
+                        : [$target];
+                foreach ($targets as $db_target) {
+                        foreach (UOJDatabaseBackup::listBackups($db_target) as $item) {
+                                echo $item['target'] . "\t" . $item['name'] . "\t" . $item['size'] . "\t" . date('Y-m-d H:i:s', $item['mtime']) . "\n";
+                        }
                 }
                 exit(0);
         }
