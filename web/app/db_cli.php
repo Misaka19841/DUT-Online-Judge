@@ -6,10 +6,12 @@ require __DIR__ . '/autoload.php';
 require __DIR__ . '/models/UOJConfig.php';
 
 function dbCliHelp() {
+        $main_db = UOJConfig::$data['database']['database'];
         echo "DOJ Database CLI\n";
-        echo "php db_cli.php backup <main|acm_game> [output.sql]\n";
-        echo "php db_cli.php restore <main|acm_game> <input.sql>\n";
-        echo "php db_cli.php list [main|acm_game|all]\n";
+        echo "php db_cli.php backup <database_name> [output.sql]\n";
+        echo "php db_cli.php restore <database_name> <input.sql>\n";
+        echo "php db_cli.php list [database_name]\n";
+        echo "available databases: {$main_db}, card_game_new\n";
 }
 
 if ($argc <= 1) {
@@ -41,13 +43,12 @@ try {
                 exit(0);
         }
         if ($cmd === 'list') {
-                $target = $argc >= 3 ? $argv[2] : 'all';
-                $targets = $target === 'all'
-                        ? array_keys(UOJDatabaseBackup::getTargets())
-                        : [$target];
+                $targets = $argc >= 3
+                        ? [$argv[2]]
+                        : array_keys(UOJDatabaseBackup::getTargets());
                 foreach ($targets as $db_target) {
                         foreach (UOJDatabaseBackup::listBackups($db_target) as $item) {
-                                echo $item['target'] . "\t" . $item['name'] . "\t" . $item['size'] . "\t" . date('Y-m-d H:i:s', $item['mtime']) . "\n";
+                                echo $item['database'] . "\t" . $item['name'] . "\t" . $item['size'] . "\t" . date('Y-m-d H:i:s', $item['mtime']) . "\n";
                         }
                 }
                 exit(0);

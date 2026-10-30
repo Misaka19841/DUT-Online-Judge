@@ -544,7 +544,7 @@ if ($can_manage_database_backup) {
                         $database_backup_options_by_target[$target_key][$item['name']] = $item['name'];
                 }
 
-                $database_backup_create_forms[$target_key] = new UOJForm("database_backup_create_{$target_key}");
+                $database_backup_create_forms[$target_key] = new UOJForm("database_backup_create_{$target_cfg['form_key']}");
                 $database_backup_create_forms[$target_key]->submit_button_config['text'] = '创建并下载' . $target_cfg['label'] . '备份';
                 $database_backup_create_forms[$target_key]->submit_button_config['class_str'] = 'btn btn-primary';
                 $database_backup_create_forms[$target_key]->handle = function() use ($can_manage_database_backup, $target_key) {
@@ -559,7 +559,7 @@ if ($can_manage_database_backup) {
                 };
                 $database_backup_create_forms[$target_key]->runAtServer();
 
-                $database_restore_forms[$target_key] = new UOJForm("database_restore_{$target_key}");
+                $database_restore_forms[$target_key] = new UOJForm("database_restore_{$target_cfg['form_key']}");
                 $database_restore_forms[$target_key]->addSelect('backup_name', $database_backup_options_by_target[$target_key] ?: ['' => '暂无可用备份'], '服务器备份', '');
                 $database_restore_forms[$target_key]->extra_validator = function() use ($database_backup_options_by_target, $target_key) {
                         return $database_backup_options_by_target[$target_key] ? '' : '当前没有可用于恢复的服务器备份';
@@ -784,7 +784,7 @@ requireLib('morris');
                                 <div class="panel-heading">使用说明</div>
                                 <div class="panel-body">
                                         <p>这里的数据库备份与恢复只对 <code>admin</code> 开放。主站数据库和卡牌数据库完全分开操作，互不覆盖。</p>
-                                        <p>每次点击“创建并下载”都会先在服务器 <code>app/storage/db-backup/&lt;target&gt;</code> 下保留一份，再把同一个 SQL 文件直接下载给你。</p>
+                                        <p>新备份会按真实库名保存在 <code>app/storage/db-backup/&lt;database_name&gt;</code> 下；之前留在旧目录里的备份也会继续显示并可直接恢复。</p>
                                 </div>
                         </div>
 
@@ -834,14 +834,14 @@ requireLib('morris');
                         <div class="panel panel-default">
                                 <div class="panel-heading">命令行恢复</div>
                                 <div class="panel-body">
-                                        <p>如果数据库已经空了、网站起不来，可以直接在服务器上运行下面这组命令：</p>
+                                        <p>如果数据库本身还在，只是数据不对、不全，或者缺了几张表，可以直接在服务器上运行下面这组命令：</p>
 
-<pre>php <?= HTML::escape($db_cli_path) ?> backup main
-php <?= HTML::escape($db_cli_path) ?> backup acm_game
-php <?= HTML::escape($db_cli_path) ?> list all
-php <?= HTML::escape($db_cli_path) ?> restore main /path/to/main-backup.sql
-php <?= HTML::escape($db_cli_path) ?> restore acm_game /path/to/acm-game-backup.sql</pre>
-                                        <p>其中 <code>restore</code> 会只恢复你指定的目标库，不依赖网站先连上数据库。</p>
+<pre>php <?= HTML::escape($db_cli_path) ?> backup <?= HTML::escape(UOJConfig::$data['database']['database']) ?>
+php <?= HTML::escape($db_cli_path) ?> backup card_game_new
+php <?= HTML::escape($db_cli_path) ?> list
+php <?= HTML::escape($db_cli_path) ?> restore <?= HTML::escape(UOJConfig::$data['database']['database']) ?> /path/to/uoj-backup.sql
+php <?= HTML::escape($db_cli_path) ?> restore card_game_new /path/to/card-game-backup.sql</pre>
+                                        <p>这里直接使用真实库名，不再额外引入 <code>main</code> 之类的别名。</p>
                                 </div>
                         </div>
                 <?php elseif ($cur_tab === 'problems'): ?>
